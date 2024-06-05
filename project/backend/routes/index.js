@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const userModel = require("../routes/users");
+const user = require("../routes/users");
 
 
 /* GET home page. */
@@ -14,25 +14,26 @@ router.get('/check', function(req, res) {
 
 router.post('/register', async (req, res) => {
   try {
-      const { ref, firstName, lastName, date, notes, issue, imei, product, price, remarks, email, phoneCell, phoneHome, pickUpTime, employName } = req.body;
+      const { ref, firstName, lastName, date, notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickUpTime, employeeName } = req.body;
 
       // Create new document in database
-      const newObj = new YourModel({
+      const newObj = new user({
           ref,
           firstName,
           lastName,
-          date,
+          pickupTime:date,
           notes,
           issue,
-          imei,
+          imeiSn,
           product,
           price,
           remarks,
           email,
           phoneCell,
           phoneHome,
-          pickUpTime,
-          employName
+          employeeName,
+          date:new Date(),
+          dateTime:new Date(),
       });
 
       // Save document to database

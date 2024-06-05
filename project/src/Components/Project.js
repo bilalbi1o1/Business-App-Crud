@@ -13,13 +13,13 @@ const Project = () => {
         { id: 'lastName', name: 'Last Name' },
         { id: 'product', name: 'Product' },
         { id: 'issue', name: 'Issue' },
-        { id: 'imei', name: 'IMEI' },
+        { id: 'imeiSn', name: 'IMEI' },
         { id: 'notes', name: 'Notes' },
         { id: 'price', name: 'Price' },
         { id: 'email', name: 'Email' },
         { id: 'phoneCell', name: 'Phone Cell' },
         { id: 'phoneHome', name: 'Phone Home' },
-        { id: 'employName', name: 'Employ Name' },
+        { id: 'employeeName', name: 'Employ Name' },
         { id: 'pickUpTime', name: 'PickUp Time' },
         { id: 'remarks', name: 'Remarks' },
     ]
@@ -30,13 +30,13 @@ const Project = () => {
     const [date, dateChange] = useState('');
     const [product, productChange] = useState('');
     const [issue, issueChange] = useState('');
-    const [imei, imeiChange] = useState(0);
+    const [imeiSn, imeiChange] = useState(0);
     const [notes, notesChange] = useState('');
     const [price, priceChange] = useState(0);
     const [email, emailChange] = useState('');
     const [phoneCell, phoneCellChange] = useState('');
     const [phoneHome, phoneHomeChange] = useState('');
-    const [employName, employNameChange] = useState('');
+    const [employeeName, employNameChange] = useState('');
     const [pickUpTime, pickUpTimeChange] = useState('');
     const [remarks, remarksChange] = useState('');
 
@@ -58,7 +58,7 @@ const Project = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date, notes, issue, imei, product, price, remarks, email, phoneCell, phoneHome, pickUpTime, employName };
+        const _obj = { ref, firstName, lastName, date, notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickUpTime, employeeName };
         console.log(_obj);
 
 
@@ -122,13 +122,13 @@ const Project = () => {
                             />
                             <TextField value={product} onChange={e => { productChange(e.target.value) }} variant="outlined" label="Product" ></TextField>
                             <TextField value={issue} onChange={e => { issueChange(e.target.value) }} variant="outlined" label="Issue" ></TextField>
-                            <TextField value={imei} onChange={e => { imeiChange(e.target.value) }} variant="outlined" label="IMEI" ></TextField>
+                            <TextField value={imeiSn} onChange={e => { imeiChange(e.target.value) }} variant="outlined" label="IMEI" ></TextField>
                             <TextField multiline maxRows={2} minRows={2} value={notes} onChange={e => { notesChange(e.target.value) }} variant="outlined" label="Notes" ></TextField>
                             <TextField value={price} onChange={e => { priceChange(e.target.value) }} variant="outlined" label="Price" ></TextField>
                             <TextField value={email} onChange={e => { emailChange(e.target.value) }} variant="outlined" label="Email" ></TextField>
                             <TextField value={phoneCell} onChange={e => { phoneCellChange(e.target.value) }} variant="outlined" label="Cell Number" ></TextField>
                             <TextField value={phoneHome} onChange={e => { phoneHomeChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
-                            <TextField value={employName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
+                            <TextField value={employeeName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
                             <TextField value={pickUpTime} onChange={e => { pickUpTimeChange(e.target.value) }} variant="outlined" label="PickUp Time" ></TextField>
                             <TextField multiline maxRows={2} minRows={2} value={remarks} onChange={e => { remarksChange(e.target.value) }} variant="outlined" label="Remarks" ></TextField>
                             <Button variant='contained' type="submit">

@@ -10,15 +10,6 @@ module.exports = router;
 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://127.0.0.1:27017/practice")
-.then(() => {
-  console.log("connected");
-})
-.catch(() => {
-  console.log("falied");  
-})
-
-
 const userSchema = new mongoose.Schema({
   ref: { type: String, required: true },
   date: { type: Date, required: true },
@@ -38,4 +29,5 @@ const userSchema = new mongoose.Schema({
   price: { type: Number, required: true }
 });
 
-module.exports = mongoose.model("user",userSchema);
+const user = mongoose.model("user",userSchema);
+module.exports = user;
