@@ -11,7 +11,7 @@ module.exports = router;
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  ref: { type: String, required: true },
+  ref: { type: String, required: true,unique: true },
   date: { type: Date, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   phoneCell: { type: String, required: true },
   phoneHome: { type: String, required: true },
   employeeName: { type: String, required: true },
-  pickupTime: { type: String, required: true },
+  pickupDate: { type: Date, required: true },
   dateTime: { type: Date, required: true },
   remarks: { type: String },
   product: { type: String, required: true },
