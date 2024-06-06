@@ -1,9 +1,9 @@
-import {
-    TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button
-    , TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField
-} from "@mui/material"
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useEffect, useState } from "react"
+import {
+    TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button,
+    TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField
+} from "@mui/material";
 import './project.css';
 
 const Project = () => {
@@ -25,6 +25,22 @@ const Project = () => {
         { id: 'remarks', name: 'Remarks' },
     ]
 
+    const [open, openChange] = useState(false);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/users');
+            setUsers(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();
 
@@ -44,27 +60,6 @@ const Project = () => {
     const [pickupDate, pickupDateChange] = useState('');
     const [remarks, remarksChange] = useState('');
 
-    const [open, openChange] = useState(false);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/users');
-            setUsers(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    const openPopUp = () => {
-        openChange(true);
-    }
-    const closePopUp = () => {
-        openChange(false);
-    }
     const add = () => {
         openPopUp();
     }
@@ -75,6 +70,32 @@ const Project = () => {
     const handlePickupDateChange = event => {
         pickupDateChange(event.target.value);
     };
+
+    const openPopUp = () => {
+        openChange(true);
+    }
+    const closePopUp = () => {
+        openChange(false);
+        setEditedUser(null);
+
+          //Reset Form Fields
+          refChange(0);
+          firstNameChange('');
+          lastNameChange('');
+          dateChange('');
+          productChange('');
+          issueChange('');
+          imeiChange(0);
+          notesChange('');
+          priceChange(0);
+          emailChange('');
+          phoneCellChange('');
+          phoneHomeChange('');
+          employNameChange('');
+          pickupDateChange('');
+          remarksChange('');
+    }
+   
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -93,23 +114,6 @@ const Project = () => {
         } catch (error) {
             console.error('Error adding record:', error);
         }
-
-        //Reset Form Fields
-        refChange(0);
-        firstNameChange('');
-        lastNameChange('');
-        dateChange('');
-        productChange('');
-        issueChange('');
-        imeiChange(0);
-        notesChange('');
-        priceChange(0);
-        emailChange('');
-        phoneCellChange('');
-        phoneHomeChange('');
-        employNameChange('');
-        pickupDateChange('');
-        remarksChange('');
     }
 
     const handleSubmitEdit = async (e) => {
@@ -128,38 +132,27 @@ const Project = () => {
             closePopUp();
         } catch (error) {
             console.error('Error updating record:', error);
-        }
-
-        // Reset form fields
-        refChange(0);
-        firstNameChange('');
-        lastNameChange('');
-        dateChange('');
-        productChange('');
-        issueChange('');
-        imeiChange(0);
-        notesChange('');
-        priceChange(0);
-        emailChange('');
-        phoneCellChange('');
-        phoneHomeChange('');
-        employNameChange('');
-        pickupDateChange('');
-        remarksChange('');
-
-        setEditedUser('');
+        }   
     };
+
+    const deleteUser = (ref) => {
+        if (window.confirm("Are you sure you want to delete this user?")) {
+            try {
+                axios.delete(`http://localhost:5000/delete/${ref}`);
+                console.log('Record deleted:', ref);
+                fetchData();
+            } catch (error) {
+                console.error('Error deleting record:', error);
+            }
+        }
+    };
+    
 
 
     const openEditDialog = () => {
         // Open the dialog box
         openChange(true);
-    };
-
-    const closeEditDialog = () => {
-        // Close the dialog box
-        openChange(false);
-    };
+    };    
 
     const editRecord = (ref) => {
         // Find the user object with the provided userId
@@ -198,7 +191,7 @@ const Project = () => {
                     <TableContainer>
                         <Table>
                             <TableHead>
-                                <TableRow style={{ alignContent: "center", backgroundColor: "midnightBLue" }} >
+                                <TableRow style={{ backgroundColor: "midnightBLue",textAlign: "center" }} >
                                     {columns.map((column) =>
                                         <TableCell style={{ color: "#fff" }} key={column.id}> {column.name} </TableCell>
                                     )}
@@ -225,7 +218,7 @@ const Project = () => {
                                         <TableCell>{user.remarks}</TableCell>
                                         <TableCell style={{ display: "flex" }} >
                                             <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
-                                            <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => editRecord(user.id)}>Delete</Button>
+                                            <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -242,7 +235,7 @@ const Project = () => {
                 <DialogContent>
                     <form onSubmit={editedUser ? handleSubmitEdit : handleSubmit} >
                         <Stack spacing={2} margin={2} >
-                            <TextField value={ref} onChange={e => { refChange(e.target.value) }} variant="outlined" label="ref#" ></TextField>
+                            <TextField value={editedUser ? editedUser.ref : ref} onChange={e => { refChange(e.target.value) }} variant="outlined" label="ref#"     disabled={!!editedUser} ></TextField>
                             <TextField value={firstName} onChange={e => { firstNameChange(e.target.value) }} variant="outlined" label="First Name" ></TextField>
                             <TextField value={lastName} onChange={e => { lastNameChange(e.target.value) }} variant="outlined" label="Last Name" ></TextField>
                             <TextField
@@ -291,3 +284,4 @@ const Project = () => {
 }
 
 export default Project;
+
