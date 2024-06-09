@@ -34,7 +34,7 @@ const Project = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/users');
+            const response = await axios.get('http://localhost:8000/api/users');
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -99,17 +99,17 @@ const Project = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date, notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate, employeeName };
+        const _obj = { ref, firstName, lastName,date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate: formatDate(pickupDate), employeeName };
         console.log(_obj);
 
         try {
-            const response = await axios.post('http://localhost:5000/register', _obj, {
+            const response = await axios.post('http://localhost:8000/api/users', _obj, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             console.log('Record added:', response.data);
-            fetchData();
+            await fetchData();
             closePopUp();
         } catch (error) {
             console.error('Error adding record:', error);
@@ -118,17 +118,17 @@ const Project = () => {
 
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date, notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate, employeeName };
+        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome,pickupDate: formatDate(pickupDate), employeeName };
         console.log(_obj);
 
         try {
-            const response = await axios.post(`http://localhost:5000/edit/${editedUser.ref}`, _obj, {
+            const response = await axios.patch(`http://localhost:8000/api/users/${editedUser.ref}`, _obj, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             console.log('Record updated:', response.data);
-            fetchData();
+            await fetchData();
             closePopUp();
         } catch (error) {
             console.error('Error updating record:', error);
@@ -138,7 +138,7 @@ const Project = () => {
     const deleteUser = (ref) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                axios.delete(`http://localhost:5000/delete/${ref}`);
+                axios.delete(`http://localhost:8000/api/users/${ref}`);
                 console.log('Record deleted:', ref);
                 fetchData();
             } catch (error) {
@@ -146,7 +146,14 @@ const Project = () => {
             }
         }
     };
-    
+
+    const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 
     const openEditDialog = () => {

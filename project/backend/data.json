@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "gender": "Male",
+    "job_title": "Software Engineer"
+  },
+  {
+    "id": 2,
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com",
+    "gender": "Female",
+    "job_title": "Product Manager"
+  },
+  {
+    "id": 3,
+    "first_name": "Michael",
+    "last_name": "Johnson",
+    "email": "michael.johnson@example.com",
+    "gender": "Male",
+    "job_title": "Data Scientist"
+  },
+  {
+    "id": 4,
+    "first_name": "Emily",
+    "last_name": "Davis",
+    "email": "emily.davis@example.com",
+    "gender": "Female",
+    "job_title": "UX Designer"
+  },
+  {
+    "id": 5,
+    "first_name": "David",
+    "last_name": "Brown",
+    "email": "david.brown@example.com",
+    "gender": "Male",
+    "job_title": "Marketing Specialist"
+  },
+  {
+    "id": 6,
+    "first_name": "Emma",
+    "last_name": "Wilson",
+    "email": "emma.wilson@example.com",
+    "gender": "Female",
+    "job_title": "HR Manager"
+  },
+  {
+    "id": 7,
+    "first_name": "Daniel",
+    "last_name": "Taylor",
+    "email": "daniel.taylor@example.com",
+    "gender": "Male",
+    "job_title": "Business Analyst"
+  },
+  {
+    "id": 8,
+    "first_name": "Sophia",
+    "last_name": "Anderson",
+    "email": "sophia.anderson@example.com",
+    "gender": "Female",
+    "job_title": "Project Manager"
+  },
+  {
+    "id": 9,
+    "first_name": "James",
+    "last_name": "Thomas",
+    "email": "james.thomas@example.com",
+    "gender": "Male",
+    "job_title": "Web Developer"
+  },
+  {
+    "id": 10,
+    "first_name": "Olivia",
+    "last_name": "Jackson",
+    "email": "olivia.jackson@example.com",
+    "gender": "Female",
+    "job_title": "Graphic Designer"
+  },
+  {
+    "id": 11,
+    "first_name": "Robert",
+    "last_name": "White",
+    "email": "robert.white@example.com",
+    "gender": "Male",
+    "job_title": "Financial Analyst"
+  },
+  {
+    "id": 12,
+    "first_name": "Isabella",
+    "last_name": "Harris",
+    "email": "isabella.harris@example.com",
+    "gender": "Female",
+    "job_title": "Content Writer"
+  },
+  {
+    "id": 13,
+    "first_name": "William",
+    "last_name": "Martin",
+    "email": "william.martin@example.com",
+    "gender": "Male",
+    "job_title": "Sales Manager"
+  },
+  {
+    "id": 14,
+    "first_name": "Mia",
+    "last_name": "Thompson",
+    "email": "mia.thompson@example.com",
+    "gender": "Female",
+    "job_title": "Operations Manager"
+  },
+  {
+    "id": 15,
+    "first_name": "Joseph",
+    "last_name": "Garcia",
+    "email": "joseph.garcia@example.com",
+    "gender": "Male",
+    "job_title": "Quality Assurance Engineer"
+  },
+  {
+    "id": 16,
+    "first_name": "Charlotte",
+    "last_name": "Martinez",
+    "email": "charlotte.martinez@example.com",
+    "gender": "Female",
+    "job_title": "DevOps Engineer"
+  },
+  {
+    "id": 17,
+    "first_name": "Alexander",
+    "last_name": "Robinson",
+    "email": "alexander.robinson@example.com",
+    "gender": "Male",
+    "job_title": "Database Administrator"
+  },
+  {
+    "id": 18,
+    "first_name": "Amelia",
+    "last_name": "Clark",
+    "email": "amelia.clark@example.com",
+    "gender": "Female",
+    "job_title": "Technical Writer"
+  },
+  {
+    "id": 19,
+    "first_name": "Benjamin",
+    "last_name": "Rodriguez",
+    "email": "benjamin.rodriguez@example.com",
+    "gender": "Male",
+    "job_title": "Network Engineer"
+  },
+  {
+    "id": 20,
+    "first_name": "Ava",
+    "last_name": "Lewis",
+    "email": "ava.lewis@example.com",
+    "gender": "Female",
+    "job_title": "Customer Support Specialist"
+  },
+  {
+    "first_name": "Bilal",
+    "last_name": "Ahmad",
+    "email": "john.doe@example.com",
+    "gender": "Male",
+    "job_title": "Software Engineer",
+    "id": 21
+  },
+  {
+date"
+: "2023-05-08"
+email
+: "bjack.martin@example.com"
+employeeName
+: "Ian Walker"
+firstName
+: "Jack"
+imeiSn
+: "SN923456789877"
+issue
+: "Sensor Issue.."
+lastName
+: "Martin"
+notes
+: "Replace sensor"
+phoneCell
+: "123-333-7890"
+phoneHome
+: "098-333-4321"
+pickupDate
+: "2023-05-17"
+price
+: 30
+product
+: "Mouse"
+ref
+: "REF010"
+remarks
+: "changed"
+  }
+]
