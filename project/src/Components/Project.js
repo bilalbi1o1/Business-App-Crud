@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import {
     TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button,
-    TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField
+    TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField,
+    TablePagination
 } from "@mui/material";
 import './project.css';
+import { Link } from 'react-router-dom';
 
 const Project = () => {
     const columns = [
@@ -59,9 +61,16 @@ const Project = () => {
     const [employeeName, employNameChange] = useState('');
     const [pickupDate, pickupDateChange] = useState('');
     const [remarks, remarksChange] = useState('');
+    const [rowPerPage, rowPerPageChange] = useState(4);
+    const [page, pageChange] = useState(0);
 
-    const add = () => {
-        openPopUp();
+    const handlePageChange = (event, newpage) => {
+        pageChange(newpage);
+    }
+
+    const handleRowPerPageChange = (event) => {
+        handleRowPerPageChange(event.target.value);
+        pageChange(0);
     }
 
     const handleDateChange = event => {
@@ -71,54 +80,31 @@ const Project = () => {
         pickupDateChange(event.target.value);
     };
 
-    const openPopUp = () => {
-        openChange(true);
-    }
     const closePopUp = () => {
         openChange(false);
         setEditedUser(null);
 
-          //Reset Form Fields
-          refChange(0);
-          firstNameChange('');
-          lastNameChange('');
-          dateChange('');
-          productChange('');
-          issueChange('');
-          imeiChange(0);
-          notesChange('');
-          priceChange(0);
-          emailChange('');
-          phoneCellChange('');
-          phoneHomeChange('');
-          employNameChange('');
-          pickupDateChange('');
-          remarksChange('');
-    }
-   
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const _obj = { ref, firstName, lastName,date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate: formatDate(pickupDate), employeeName };
-        console.log(_obj);
-
-        try {
-            const response = await axios.post('http://localhost:8000/api/users', _obj, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log('Record added:', response.data);
-            await fetchData();
-            closePopUp();
-        } catch (error) {
-            console.error('Error adding record:', error);
-        }
+        //Reset Form Fields
+        refChange(0);
+        firstNameChange('');
+        lastNameChange('');
+        dateChange('');
+        productChange('');
+        issueChange('');
+        imeiChange(0);
+        notesChange('');
+        priceChange(0);
+        emailChange('');
+        phoneCellChange('');
+        phoneHomeChange('');
+        employNameChange('');
+        pickupDateChange('');
+        remarksChange('');
     }
 
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome,pickupDate: formatDate(pickupDate), employeeName };
+        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate: formatDate(pickupDate), employeeName };
         console.log(_obj);
 
         try {
@@ -132,7 +118,7 @@ const Project = () => {
             closePopUp();
         } catch (error) {
             console.error('Error updating record:', error);
-        }   
+        }
     };
 
     const deleteUser = (ref) => {
@@ -140,7 +126,7 @@ const Project = () => {
             try {
                 axios.delete(`http://localhost:8000/api/users/${ref}`);
                 console.log('Record deleted:', ref);
-                fetchData();
+                setUsers(users.filter(user => user.ref !== ref));
             } catch (error) {
                 console.error('Error deleting record:', error);
             }
@@ -148,18 +134,18 @@ const Project = () => {
     };
 
     const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
 
     const openEditDialog = () => {
         // Open the dialog box
         openChange(true);
-    };    
+    };
 
     const editRecord = (ref) => {
         // Find the user object with the provided userId
@@ -192,13 +178,15 @@ const Project = () => {
         <div>
             <Paper sx={{ margin: "1%" }}>
                 <div style={{ margin: "1%" }} >
-                    <Button onClick={add} variant="contained" >Add New (+)</Button>
+                    <Link to="/addRecord" style={{ color: '#fff', backgroundColor: 'midnightBlue', borderRadius: '10px', padding: '10px', textDecoration: 'none' }}>
+                        Add New (+)
+                    </Link>
                 </div>
                 <div style={{ margin: "1%" }} >
                     <TableContainer>
                         <Table>
                             <TableHead>
-                                <TableRow style={{ backgroundColor: "midnightBLue",textAlign: "center" }} >
+                                <TableRow style={{ backgroundColor: "midnightBLue", textAlign: "center" }} >
                                     {columns.map((column) =>
                                         <TableCell style={{ color: "#fff" }} key={column.id}> {column.name} </TableCell>
                                     )}
@@ -206,47 +194,57 @@ const Project = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {users.map((user) => (
-                                    <TableRow key={user.ref}>
-                                        <TableCell>{user.ref}</TableCell>
-                                        <TableCell>{user.date}</TableCell>
-                                        <TableCell>{user.firstName}</TableCell>
-                                        <TableCell>{user.lastName}</TableCell>
-                                        <TableCell>{user.product}</TableCell>
-                                        <TableCell>{user.issue}</TableCell>
-                                        <TableCell>{user.imeiSn}</TableCell>
-                                        <TableCell>{user.notes}</TableCell>
-                                        <TableCell>{user.price}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.phoneCell}</TableCell>
-                                        <TableCell>{user.phoneHome}</TableCell>
-                                        <TableCell>{user.employeeName}</TableCell>
-                                        <TableCell>{user.pickupDate}</TableCell>
-                                        <TableCell>{user.remarks}</TableCell>
-                                        <TableCell style={{ display: "flex" }} >
-                                            <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
-                                            <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {users
+                                    .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
+                                    .map((user) => (
+                                        <TableRow key={user.ref}>
+                                            <TableCell>{user.ref}</TableCell>
+                                            <TableCell>{user.date}</TableCell>
+                                            <TableCell>{user.firstName}</TableCell>
+                                            <TableCell>{user.lastName}</TableCell>
+                                            <TableCell>{user.product}</TableCell>
+                                            <TableCell>{user.issue}</TableCell>
+                                            <TableCell>{user.imeiSn}</TableCell>
+                                            <TableCell>{user.notes}</TableCell>
+                                            <TableCell>{user.price}</TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.phoneCell}</TableCell>
+                                            <TableCell>{user.phoneHome}</TableCell>
+                                            <TableCell>{user.employeeName}</TableCell>
+                                            <TableCell>{user.pickupDate}</TableCell>
+                                            <TableCell>{user.remarks}</TableCell>
+                                            <TableCell style={{ display: "flex" }} >
+                                                <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
+                                                <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <TablePagination rowsPerPageOptions={[4]}
+                        rowsPerPage={rowPerPage}
+                        page={page}
+                        count={users.length}
+                        component={'div'}
+                        onPageChange={handlePageChange}
+                        onRowsPerPageChange={handleRowPerPageChange}>
+                    </TablePagination>
                 </div>
             </Paper>
 
             <Dialog open={open} onClose={closePopUp} fullWidth maxWidth="sm">
                 <DialogTitle>
-                    <span>{editedUser ? 'Edit Record' : 'Add Record'}</span>
+                    <span>{'Edit Record'}</span>
                 </DialogTitle>
                 <DialogContent>
-                    <form onSubmit={editedUser ? handleSubmitEdit : handleSubmit} >
+                    <form onSubmit={handleSubmitEdit} >
                         <Stack spacing={2} margin={2} >
-                            <TextField value={editedUser ? editedUser.ref : ref} onChange={e => { refChange(e.target.value) }} variant="outlined" label="ref#"     disabled={!!editedUser} ></TextField>
+                            <TextField value={editedUser ? editedUser.ref : ref} onChange={e => { refChange(e.target.value) }} variant="outlined" label="ref#" disabled={!!editedUser} ></TextField>
                             <TextField value={firstName} onChange={e => { firstNameChange(e.target.value) }} variant="outlined" label="First Name" ></TextField>
                             <TextField value={lastName} onChange={e => { lastNameChange(e.target.value) }} variant="outlined" label="Last Name" ></TextField>
                             <TextField
-                                label="Select a Date"
+                                label="Date"
                                 type="date"
                                 variant="outlined"
                                 value={date}
@@ -270,7 +268,7 @@ const Project = () => {
                             <TextField value={phoneHome} onChange={e => { phoneHomeChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
                             <TextField value={employeeName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
                             <TextField
-                                label="Select PickUp Date"
+                                label="PickUp Date"
                                 type="date"
                                 variant="outlined"
                                 value={pickupDate}
@@ -280,7 +278,7 @@ const Project = () => {
                                 }} />
                             <TextField multiline maxRows={2} minRows={2} value={remarks} onChange={e => { remarksChange(e.target.value) }} variant="outlined" label="Remarks" ></TextField>
                             <Button variant='contained' type="submit">
-                                {editedUser ? 'Update' : 'Submit'}
+                                {'Update'}
                             </Button>
                         </Stack>
                     </form>

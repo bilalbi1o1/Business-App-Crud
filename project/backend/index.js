@@ -10,6 +10,7 @@ const port = 8000;
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(logReqRes('log.txt'));
+app.use(express.json());
 
 //Routes
 app.use('/api/users',userRouter);

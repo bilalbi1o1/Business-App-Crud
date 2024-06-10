@@ -49,7 +49,7 @@ async function handleGetUserByRef(req, res) {
 async function handleUpdateUserByRef(req, res) {
     const userRef = req.params.ref;
     const body = req.body;
-    console.log(req.body);
+    console.log("This is the body",req.body);
 
     // Update the user's data in the database
     const query = `
@@ -98,6 +98,7 @@ async function handleDeleteUserByRef(req, res) {
 async function handleCreateNewUser(req, res) {
     const body = req.body;
     const { ref, date, firstName, lastName, email, phoneCell, phoneHome, employeeName, pickupDate, remarks, product, issue, imeiSn, notes, price } = body;
+    console.log(body);
 
     const query = `INSERT INTO userDetails (ref, date, firstName, lastName, email, phoneCell, phoneHome, employeeName,
         pickupDate, remarks, product, issue, imeiSn, notes, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
