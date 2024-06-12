@@ -1,0 +1,21 @@
+.pageTitle{
+    font-weight: 400;
+    margin: 2vw;
+    margin-left: 46vw;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vw;
+    margin: 8vh;
+}
+
+.signUpDialog{
+    display: flex;
+    flex-direction: column;
+    margin: 0vh 2vw;
+    gap: 1vh;
+}

@@ -42,7 +42,6 @@ const AddUserForm = () => {
         }
       });
       setSnackbar({ open: true, message: 'Record added successfully', severity: 'success' });
-      // await fetchData(); // Uncomment if you have this function
     } catch (error) {
       setSnackbar({ open: true, message: 'Error adding record', severity: 'error' });
       console.error('Error adding record:', error);
