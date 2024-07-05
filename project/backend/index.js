@@ -3,7 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const logReqRes = require('./middlewares/index');
-const {isLoggedin} = require('./middlewares/auth');
+const {checkForAuthentication} = require('./middlewares/auth');
 
 const userRouter = require('./routes/user');
 const signUpRouter = require('./routes/signUp');
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 //Routes
-app.use('/api/users',isLoggedin,userRouter);
 app.use('/api/signUp',signUpRouter);
+app.use('/api/users',checkForAuthentication,userRouter);
 
 app.listen(port, console.log(`Server started at port ${port}`));

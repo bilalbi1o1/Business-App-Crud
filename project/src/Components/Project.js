@@ -6,7 +6,7 @@ import {
     TablePagination
 } from "@mui/material";
 import './project.css';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 const Project = () => {
     const columns = [
@@ -28,6 +28,7 @@ const Project = () => {
     ]
 
     const [open, openChange] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
@@ -36,12 +37,28 @@ const Project = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/users');
+            const loginData = localStorage.getItem('login');
+            if (!loginData) {
+                throw new Error('No login data found in localStorage');
+            }
+    
+            const { token } = JSON.parse(loginData);
+            console.log('Retrieved token:', token); // Log the token to see if it's being retrieved
+    
+            const response = await axios.get('http://localhost:8000/api/users', {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
+    
             setUsers(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
+        } catch (error) {            
+            navigate('/error');
+            // console.error('Error fetching data:', error);
         }
     };
+    
+    
 
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();

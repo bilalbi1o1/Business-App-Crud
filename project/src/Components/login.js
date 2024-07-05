@@ -1,8 +1,9 @@
 import './login.css';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Button, TextField, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import axios from 'axios';
+import { Token } from '@mui/icons-material';
 
 export default function Login() {
 
@@ -37,15 +38,23 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newUser = { ...formData };
-        console.log(newUser);
         try {
-            await axios.post('http://localhost:8000/api/signUp/login', newUser, {
+            let response = await axios.post('http://localhost:8000/api/signUp/login', newUser, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-            setSnackbar({ open: true, message: 'Logged in successfully', severity: 'success' });
-            navigate('/'); // Redirect to the root route
+            response = response.data;
+            console.log(response);
+            if (response.token) {
+                localStorage.setItem('login', JSON.stringify({
+                    login: true,
+                    token: response.token
+                }));
+                setSnackbar({ open: true, message: 'Logged in successfully', severity: 'success' });
+                navigate('/');
+
+            }
         } catch (error) {
             setSnackbar({ open: true, message: 'Error logging in', severity: 'error' });
             console.error('Error logging in:', error);
@@ -69,8 +78,8 @@ export default function Login() {
             console.error('Error Signing Up:', error);
         }
 
-         //Reset Form Fields
-         setSignupData({
+        //Reset Form Fields
+        setSignupData({
             name: null,
             email: null,
             password: null

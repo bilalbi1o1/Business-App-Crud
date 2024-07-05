@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const {setUser,getUser} = require('../service/auth');
 const pool = require('../config');
+const { use } = require('../routes/user');
 
 async function handleUserSignUp(req, res) {
     const { name, email, password } = req.body;
@@ -44,12 +45,8 @@ async function handleUserLogin(req, res) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
 
-        const sessionId = uuidv4();
-        setUser(sessionId,user);
-        res.cookie('uid',sessionId);
-
-        // User authentication successful
-        res.status(200).json({ message: 'User authenticated successfully', user: user });
+        const token = await setUser(user);
+        return res.json({token: token });
 
     } catch (error) {
         console.error('Error during user login:', error);
