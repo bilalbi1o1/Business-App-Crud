@@ -1,46 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { Button, TextField, Snackbar, Alert } from '@mui/material';
-import './addRecordForm.css';
+import { Button, TextField, Snackbar, Alert, Typography, Paper, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
+import './addRecordForm.css';
 
 const AddUserForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    ref: "",
-    firstName: "",
-    lastName: "",
-    date: "",
-    product: "",
-    issue: "",
-    imeiSn: "",
-    notes: "",
-    price: "",
-    email: "",
-    phoneCell: "",
-    phoneHome: "",
-    employeeName: "",
-    pickupDate: "",
-    remarks: "",
+    ref: "", firstName: "", lastName: "", date: "", product: "",
+    issue: "", imei: "", notes: "", price: "", email: "",
+    cellNumber: "", phoneNumber: "", employeeName: "", pickupDate: "", remarks: ""
   });
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("login");
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+    const token = parsedData ? parsedData.token : null;
+
+    if (!token) {
+      navigate("/error"); // Redirect if not logged in
+    }
+  }, []);
+
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
 
   const handleChange = (event) => {
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      [event.target.name]: event.target.value
-    }));
+    setFormData(prev => ({ ...prev, [event.target.name]: event.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = { ...formData };
+    const storedData = JSON.parse(localStorage.getItem('login') || '{}');
+    const token = storedData.token || null;
 
     try {
-      await axios.post('http://localhost:8000/api/users', newUser, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      await axios.post(`${Backend}/api/users`, formData, {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
       });
+      console.log("Backend Route",Backend);
       setSnackbar({ open: true, message: 'Record added successfully', severity: 'success' });
     } catch (error) {
       setSnackbar({ open: true, message: 'Error adding record', severity: 'error' });
@@ -48,53 +46,55 @@ const AddUserForm = () => {
     }
   };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setSnackbar({ open: false, message: '', severity: '' });
-  };
-
   return (
-    <div>
-      <Link to="/" style={{ color: '#fff', backgroundColor: 'midnightBlue', borderRadius: '10px', padding: '10px', textDecoration: 'none', position: 'absolute' ,marginLeft: '2vw' }}>
-        View Records
-      </Link>
-      <h3 className='pageTitle'>Add New Record</h3>
-      <form onSubmit={handleSubmit}>
-        <div className='container'>
-          <TextField name='ref' value={formData.ref} onChange={handleChange} className='inputBox' label="Ref #" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='firstName' value={formData.firstName} onChange={handleChange} className='inputBox' label="First Name" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='lastName' value={formData.lastName} onChange={handleChange} className='inputBox' label="Last Name" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='date' value={formData.date} onChange={handleChange} className='inputBox' label="Date" type="date" variant="outlined" color='secondary' InputLabelProps={{ shrink: true }} />
-          <TextField name='product' value={formData.product} onChange={handleChange} className='inputBox' label="Product" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='issue' value={formData.issue} onChange={handleChange} className='inputBox' label="Issue" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='imeiSn' value={formData.imeiSn} onChange={handleChange} className='inputBox' label="IMEI" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='price' value={formData.price} onChange={handleChange} className='inputBox' label="Price" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='email' value={formData.email} onChange={handleChange} className='inputBox' label="Email" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='phoneCell' value={formData.phoneCell} onChange={handleChange} className='inputBox' label="Cell Number" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='phoneHome' value={formData.phoneHome} onChange={handleChange} className='inputBox' label="Phone Number" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='employeeName' value={formData.employeeName} onChange={handleChange} className='inputBox' label="Employee Name" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='pickupDate' value={formData.pickupDate} onChange={handleChange} className='inputBox' label="PickUp Date" type="date" variant="outlined" color='secondary' InputLabelProps={{ shrink: true }} />
-          <TextField name='notes' value={formData.notes} onChange={handleChange} className='inputBox' multiline maxRows={2} minRows={2} label="Notes" margin='normal' variant='outlined' color='secondary' />
-          <TextField name='remarks' value={formData.remarks} onChange={handleChange} className='inputBox' multiline maxRows={2} minRows={2} label="Remarks" margin='normal' variant='outlined' color='secondary' />
-        </div>
-        <div className='buttonContainer'>
-          <Button className='button' variant='contained' type='submit' color='primary'>Add</Button>
-        </div>
-      </form>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+      <Paper elevation={3} sx={{ padding: 4, width: '90%', maxWidth: 600, textAlign: 'center' }}>
+        <Typography variant="h5" fontWeight="bold" mb={2}>
+          Add New Record
+        </Typography>
+        <Link to="/Records" style={{
+          color: '#fff', backgroundColor: '#191970', padding: '8px 16px',
+          borderRadius: '8px', textDecoration: 'none', display: 'inline-block', marginBottom: '16px'
+        }}>
+          View Records
+        </Link>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: 'grid', gap: 2 }}>
+            {[
+              { name: 'ref', label: 'Ref #' }, { name: 'firstName', label: 'First Name' },
+              { name: 'lastName', label: 'Last Name' }, { name: 'product', label: 'Product' },
+              { name: 'issue', label: 'Issue' }, { name: 'imei', label: 'IMEI' },
+              { name: 'price', label: 'Price' }, { name: 'email', label: 'Email' },
+              { name: 'cellNumber', label: 'Cell Number' }, { name: 'phoneNumber', label: 'Phone Number' },
+              { name: 'employeeName', label: 'Employee Name' }, { name: 'remarks', label: 'Remarks', multiline: true },
+            ].map(field => (
+              <TextField key={field.name} name={field.name} value={formData[field.name]}
+                onChange={handleChange} label={field.label} variant="outlined" fullWidth
+                multiline={field.multiline || false} color='secondary' />
+            ))}
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+            <TextField name='date' value={formData.date} onChange={handleChange}
+              label="Date" type="date" variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
+            <TextField name='pickupDate' value={formData.pickupDate} onChange={handleChange}
+              label="PickUp Date" type="date" variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
+            <TextField name='notes' value={formData.notes} onChange={handleChange}
+              label="Notes" multiline minRows={2} variant="outlined" fullWidth color='secondary' />
+          </Box>
+
+          <Button variant='contained' type='submit' color='primary' sx={{ mt: 3, px: 4 }}>
+            Add
+          </Button>
+        </form>
+      </Paper>
+
+      <Snackbar open={snackbar.open} autoHideDuration={4000}
+        onClose={() => setSnackbar({ open: false, message: '', severity: '' })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 };
 

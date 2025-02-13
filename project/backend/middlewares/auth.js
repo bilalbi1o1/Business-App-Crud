@@ -1,54 +1,30 @@
-const {getUser} = require('../service/auth');
+const { getUser } = require("../service/auth");
 
-function checkForAuthentication(req,res,next) {
+async function checkForAuthentication(req, res, next) {
     const authorizationHeaderValue = req.headers["authorization"];
     req.user = null;
 
-    if(!authorizationHeaderValue ||  !authorizationHeaderValue.startsWith('Bearer'))
-        {   
-            res.sendStatus(403);
-            return next();
+    if (!authorizationHeaderValue || !authorizationHeaderValue.startsWith("Bearer ")) {
+        return res.sendStatus(403);
+    }
+
+    // ✅ Correct token extraction
+    const token = authorizationHeaderValue.replace("Bearer ", "").trim();
+    console.log("Extracted Token:", token);
+
+    try {
+        const user = await getUser(token); // ✅ Use `await`
+        if (!user) {
+            return res.sendStatus(403);
         }
-
-    const token = authorizationHeaderValue.split('Bearer')[1];
-    console.log(token);
-    const user = getUser(token);
-    req.user = user;    
-
-    return next();
-}
-
-function restrictTo(roles = []) {
-    return function(req,res,next) {
-        if(!req.user) 
-            return res.redirect("/login");
-
-        if(!roles.includes(req.user.role))
-            return res.end('UnAuthorized');
-
-        return next();
+        req.user = user;
+        next();
+    } catch (error) {
+        console.error("Token verification failed:", error.message);
+        return res.sendStatus(403);
     }
 }
 
 module.exports = {
-    checkForAuthentication,restrictTo
-}
-
-
-// async function isLoggedin(req,res,next){
-//     const userUid = req.cookies?.uid;
-
-//     if(!userUid) 
-//         return res.status(401).json({ message: 'Not authenticated' });
-//     const user = await getUser(userUid);
-    
-//     if(!user)
-//         {
-//             console.log("user does not exist");
-//             return res.redirect();
-//         } 
-
-//     req.user = user;
-//     console.log("user sent");
-//     next();
-// }
+    checkForAuthentication,
+};

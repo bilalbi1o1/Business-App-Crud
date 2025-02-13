@@ -1,33 +1,38 @@
 import React from 'react';
-import { Typography, Button, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Assuming you are using React Router for navigation
+import { Typography, Button, Box, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function Error() {
     const navigate = useNavigate();
 
-    const goToLogin = () => {
-        navigate('/login'); // Navigate to '/login' route
-    };
-
     return (
-        <Box
+        <Box 
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100vh', // Full viewport height
+                height: '100vh',
+                backgroundColor: '#f8f9fa',
             }}
         >
-            <Typography variant="h5" color="error" gutterBottom>
-                Error: Not Logged In
-            </Typography>
-            <Button variant="contained" onClick={goToLogin}>
-                Go to Login
-            </Button>
+            <Paper elevation={4} sx={{ padding: 4, textAlign: 'center', maxWidth: 400 }}>
+                <Typography variant="h4" color="error" fontWeight="bold" gutterBottom>
+                    Access Denied
+                </Typography>
+                <Typography variant="body1" color="textSecondary" mb={2}>
+                    You are not logged in. Please log in to continue.
+                </Typography>
+                <Button 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={() => navigate('/')}
+                >
+                    Go to Login
+                </Button>
+            </Paper>
         </Box>
     );
 }
 
 export default Error;
-

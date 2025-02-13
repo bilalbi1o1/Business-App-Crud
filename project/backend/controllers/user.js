@@ -95,17 +95,17 @@ async function handleDeleteUserByRef(req, res) {
 
 async function handleCreateNewUser(req, res) {
     const body = req.body;
-    const { ref, date, firstName, lastName, email, phoneCell, phoneHome, employeeName, pickupDate, remarks, product, issue, imeiSn, notes, price } = body;
+    const { ref, date, firstName, lastName, email, cellNumber, phoneNumber, employeeName, pickupDate, remarks, product, issue, imei, notes, price } = body;
     console.log(body);
 
-    const query = `INSERT INTO userDetails (ref, date, firstName, lastName, email, phoneCell, phoneHome, employeeName,
-        pickupDate, remarks, product, issue, imeiSn, notes, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const query = `INSERT INTO userDetails (ref, date, firstName, lastName, email, cellNumber, phoneNumber, employeeName,
+        pickupDate, remarks, product, issue, imei, notes, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    const values = [ref, date, firstName, lastName, email, phoneCell, phoneHome, employeeName, pickupDate, remarks, product, issue, imeiSn, notes, price];
+    const values = [ref, date, firstName, lastName, email, cellNumber, phoneNumber, employeeName, pickupDate, remarks, product, issue, imei, notes, price];
 
     try {
         const result = await pool.query(query, values);
-        return res.json({ status: "succeeded"});
+        return res.json({ status: "succeeded"}); 
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }

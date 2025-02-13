@@ -1,27 +1,23 @@
+require('dotenv').config();  // Load .env variables
 const jwt = require('jsonwebtoken');
-const secret = "new";
+const secret = process.env.SECRET;
 
 async function setUser(user) {
-    token = jwt.sign(user,secret);
-    console.log(token);
+    token = jwt.sign(user,secret,
+        {expiresIn: '1h'}
+    );
+    console.log("SECRET:", process.env.SECRET);
+    console.log("GeneratedToken:", token);
     return token;
 }
 
 async function getUser(token) {
     try {
         if (!token) return null;
+        console.log("SECRET:", process.env.SECRET);
         console.log("Verifying token:", token);
-        const decoded = jwt.verify(token, secret);
         
-        // Check if token is expired
-        const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
-        if (decoded.exp && decoded.exp < currentTimestamp) {
-            console.error("Token has expired");
-            return null;
-        }
-
-        console.log("Token verified successfully:", decoded);
-        return decoded;
+        return jwt.verify(token, secret);
     } catch (error) {
         console.error("Error verifying token:", error.message);
         return null;

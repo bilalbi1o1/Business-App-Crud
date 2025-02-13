@@ -6,7 +6,9 @@ import {
     TablePagination
 } from "@mui/material";
 import './project.css';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+const Backend = process.env.REACT_APP_BACKEND;
 
 const Project = () => {
     const columns = [
@@ -16,14 +18,14 @@ const Project = () => {
         { id: 'lastName', name: 'Last Name' },
         { id: 'product', name: 'Product' },
         { id: 'issue', name: 'Issue' },
-        { id: 'imeiSn', name: 'IMEI' },
+        { id: 'imei', name: 'IMEI' },
         { id: 'notes', name: 'Notes' },
         { id: 'price', name: 'Price' },
         { id: 'email', name: 'Email' },
-        { id: 'phoneCell', name: 'Phone Cell' },
-        { id: 'phoneHome', name: 'Phone Home' },
+        { id: 'cellNumber', name: 'Phone Cell' },
+        { id: 'phoneNumber', name: 'Phone Home' },
         { id: 'employeeName', name: 'Employ Name' },
-        { id: 'pickupDate', name: 'PickUp Time' },
+        { id: 'pickupDate', name: 'PickUp Date' },
         { id: 'remarks', name: 'Remarks' },
     ]
 
@@ -41,27 +43,28 @@ const Project = () => {
             if (!loginData) {
                 throw new Error('No login data found in localStorage');
             }
-    
+
             const { token } = JSON.parse(loginData);
             console.log('Retrieved token:', token); // Log the token to see if it's being retrieved
-    
-            const response = await axios.get('http://localhost:8000/api/users', {
+
+            const response = await axios.get(`${Backend}/api/users`, {
                 headers: {
                     authorization: `Bearer ${token}`
                 }
             });
-    
+            console.log(response.data);
             setUsers(response.data);
-        } catch (error) {            
+        } catch (error) {
             navigate('/error');
             // console.error('Error fetching data:', error);
         }
     };
-    
-    
+
+
 
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();
+    const [searchQuery, setSearchQuery] = useState('');
 
     const [ref, refChange] = useState(0);
     const [firstName, firstNameChange] = useState('');
@@ -69,12 +72,12 @@ const Project = () => {
     const [date, dateChange] = useState('');
     const [product, productChange] = useState('');
     const [issue, issueChange] = useState('');
-    const [imeiSn, imeiChange] = useState(0);
+    const [imei, imeiChange] = useState(0);
     const [notes, notesChange] = useState('');
     const [price, priceChange] = useState(0);
     const [email, emailChange] = useState('');
-    const [phoneCell, phoneCellChange] = useState('');
-    const [phoneHome, phoneHomeChange] = useState('');
+    const [cellNumber, cellNumberChange] = useState('');
+    const [phoneNumber, phoneNumberChange] = useState('');
     const [employeeName, employNameChange] = useState('');
     const [pickupDate, pickupDateChange] = useState('');
     const [remarks, remarksChange] = useState('');
@@ -112,8 +115,8 @@ const Project = () => {
         notesChange('');
         priceChange(0);
         emailChange('');
-        phoneCellChange('');
-        phoneHomeChange('');
+        cellNumberChange('');
+        phoneNumberChange('');
         employNameChange('');
         pickupDateChange('');
         remarksChange('');
@@ -121,13 +124,18 @@ const Project = () => {
 
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imeiSn, product, price, remarks, email, phoneCell, phoneHome, pickupDate: formatDate(pickupDate), employeeName };
+        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imei, product, price, remarks, email, cellNumber, phoneNumber, pickupDate: formatDate(pickupDate), employeeName };
         console.log(_obj);
 
+        const storedData = localStorage.getItem('login'); // Get stored JSON string
+        const parsedData = storedData ? JSON.parse(storedData) : null; // Parse it to an object
+        const token = parsedData ? parsedData.token : null;
+
         try {
-            const response = await axios.patch(`http://localhost:8000/api/users/${editedUser.ref}`, _obj, {
+            const response = await axios.patch(`${Backend}/api/users/${editedUser.ref}`, _obj, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
             });
             console.log('Record updated:', response.data);
@@ -141,7 +149,18 @@ const Project = () => {
     const deleteUser = (ref) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             try {
-                axios.delete(`http://localhost:8000/api/users/${ref}`);
+
+                const storedData = localStorage.getItem('login'); // Get stored JSON string
+                const parsedData = storedData ? JSON.parse(storedData) : null; // Parse it to an object
+                const token = parsedData ? parsedData.token : null;
+
+                console.log('Token being sent:', token); // Debugging step
+
+                axios.delete(`${Backend}/api/users/${ref}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 console.log('Record deleted:', ref);
                 setUsers(users.filter(user => user.ref !== ref));
             } catch (error) {
@@ -178,12 +197,12 @@ const Project = () => {
         dateChange(userToEdit.date.split("T")[0]); // Extract date part from ISO 8601 string
         productChange(userToEdit.product);
         issueChange(userToEdit.issue);
-        imeiChange(userToEdit.imeiSn);
+        imeiChange(userToEdit.imei);
         notesChange(userToEdit.notes);
         priceChange(userToEdit.price);
         emailChange(userToEdit.email);
-        phoneCellChange(userToEdit.phoneCell);
-        phoneHomeChange(userToEdit.phoneHome);
+        cellNumberChange(userToEdit.cellNumber);
+        phoneNumberChange(userToEdit.phoneNumber);
         employNameChange(userToEdit.employeeName);
         pickupDateChange(userToEdit.pickupDate.split("T")[0]); // Extract date part from ISO 8601 string
         remarksChange(userToEdit.remarks);
@@ -193,6 +212,21 @@ const Project = () => {
 
     return (
         <div>
+            <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px", backgroundColor: "midnightBlue", color: "#fff" }}>
+                <TextField
+                    variant="outlined"
+                    placeholder="Search..."
+                    size="small"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
+                    sx={{ backgroundColor: "#fff", borderRadius: "5px", minWidth: "200px" }}
+                />
+                <Button color="inherit" variant="outlined" onClick={() => { localStorage.removeItem('login'); navigate('/'); }}>
+                    Logout
+                </Button>
+            </header>
+
+
             <Paper sx={{ margin: "1%" }}>
                 <div style={{ margin: "1%" }} >
                     <Link to="/addRecord" style={{ color: '#fff', backgroundColor: 'midnightBlue', borderRadius: '10px', padding: '10px', textDecoration: 'none' }}>
@@ -212,6 +246,11 @@ const Project = () => {
                             </TableHead>
                             <TableBody>
                                 {users
+                                    .filter(user =>
+                                        Object.values(user).some(value =>
+                                            String(value).toLowerCase().includes(searchQuery)
+                                        )
+                                    )
                                     .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
                                     .map((user) => (
                                         <TableRow key={user.ref}>
@@ -221,12 +260,12 @@ const Project = () => {
                                             <TableCell>{user.lastName}</TableCell>
                                             <TableCell>{user.product}</TableCell>
                                             <TableCell>{user.issue}</TableCell>
-                                            <TableCell>{user.imeiSn}</TableCell>
+                                            <TableCell>{user.imei}</TableCell>
                                             <TableCell>{user.notes}</TableCell>
                                             <TableCell>{user.price}</TableCell>
                                             <TableCell>{user.email}</TableCell>
-                                            <TableCell>{user.phoneCell}</TableCell>
-                                            <TableCell>{user.phoneHome}</TableCell>
+                                            <TableCell>{user.cellNumber}</TableCell>
+                                            <TableCell>{user.phoneNumber}</TableCell>
                                             <TableCell>{user.employeeName}</TableCell>
                                             <TableCell>{user.pickupDate}</TableCell>
                                             <TableCell>{user.remarks}</TableCell>
@@ -277,12 +316,12 @@ const Project = () => {
                             />
                             <TextField value={product} onChange={e => { productChange(e.target.value) }} variant="outlined" label="Product" ></TextField>
                             <TextField value={issue} onChange={e => { issueChange(e.target.value) }} variant="outlined" label="Issue" ></TextField>
-                            <TextField value={imeiSn} onChange={e => { imeiChange(e.target.value) }} variant="outlined" label="IMEI" ></TextField>
+                            <TextField value={imei} onChange={e => { imeiChange(e.target.value) }} variant="outlined" label="IMEI" ></TextField>
                             <TextField multiline maxRows={2} minRows={2} value={notes} onChange={e => { notesChange(e.target.value) }} variant="outlined" label="Notes" ></TextField>
                             <TextField value={price} onChange={e => { priceChange(e.target.value) }} variant="outlined" label="Price" ></TextField>
                             <TextField value={email} onChange={e => { emailChange(e.target.value) }} variant="outlined" label="Email" ></TextField>
-                            <TextField value={phoneCell} onChange={e => { phoneCellChange(e.target.value) }} variant="outlined" label="Cell Number" ></TextField>
-                            <TextField value={phoneHome} onChange={e => { phoneHomeChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
+                            <TextField value={cellNumber} onChange={e => { cellNumberChange(e.target.value) }} variant="outlined" label="Cell Number" ></TextField>
+                            <TextField value={phoneNumber} onChange={e => { phoneNumberChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
                             <TextField value={employeeName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
                             <TextField
                                 label="PickUp Date"
