@@ -1,7 +1,12 @@
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { Button, TextField, Snackbar, Alert, Dialog, DialogActions, DialogContent, DialogTitle, Container, Typography, Box, Paper } from '@mui/material';
+import { 
+    Button, TextField, Snackbar, Alert, Dialog, DialogActions, 
+    DialogContent, DialogTitle, Container, Typography, Box, Paper, 
+    IconButton, InputAdornment 
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from 'axios';
 
 const Backend = process.env.REACT_APP_BACKEND;
@@ -12,14 +17,18 @@ export default function Login() {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
     const [signupOpen, setSignupOpen] = useState(false);
-    const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
+    const [otpOpen, setOtpOpen] = useState(false);
+    const [signupData, setSignupData] = useState({ email: "", password: "", confirmPassword: "" });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [otp, setOtp] = useState("");
 
     const handleChange = (event) => {
-        setFormData(prevFormData => ({ ...prevFormData, [event.target.name]: event.target.value }));
+        setFormData(prev => ({ ...prev, [event.target.name]: event.target.value }));
     };
 
     const handleSignupChange = (event) => {
-        setSignupData(prevSignupData => ({ ...prevSignupData, [event.target.name]: event.target.value }));
+        setSignupData(prev => ({ ...prev, [event.target.name]: event.target.value }));
     };
 
     const handleSubmit = async (e) => {
@@ -39,16 +48,37 @@ export default function Login() {
         }
     };
 
-    const handleSignupSubmit = async (e) => {
+    const handleSendOTP = async (e) => {
         e.preventDefault();
+
+        // ✅ Frontend Validation: Check if passwords match
+        if (signupData.password !== signupData.confirmPassword) {
+            setSnackbar({ open: true, message: 'Passwords do not match', severity: 'error' });
+            return;
+        }
+
         try {
-            await axios.post(`${Backend}/api/signUp`, signupData, {
+            await axios.post(`${Backend}/api/signUp/send-otp`, { email: signupData.email }, {
                 headers: { 'Content-Type': 'application/json' }
             });
-            setSnackbar({ open: true, message: 'User added successfully', severity: 'success' });
+            setSnackbar({ open: true, message: 'OTP sent to your email', severity: 'success' });
             setSignupOpen(false);
+            setOtpOpen(true);  // Open OTP dialog
         } catch (error) {
-            setSnackbar({ open: true, message: 'Error: Unable to sign up', severity: 'error' });
+            setSnackbar({ open: true, message: 'Error sending OTP', severity: 'error' });
+        }
+    };
+
+    const handleVerifyOTP = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${Backend}/api/signUp/verify-otp`, { ...signupData, otp }, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            setSnackbar({ open: true, message: 'User registered successfully', severity: 'success' });
+            setOtpOpen(false);
+        } catch (error) {
+            setSnackbar({ open: true, message: 'Invalid OTP', severity: 'error' });
         }
     };
 
@@ -96,17 +126,8 @@ export default function Login() {
             {/* Signup Dialog */}
             <Dialog open={signupOpen} onClose={() => setSignupOpen(false)}>
                 <DialogTitle>Sign Up</DialogTitle>
-                <form onSubmit={handleSignupSubmit}>
+                <form onSubmit={handleSendOTP}>
                     <DialogContent>
-                        <TextField 
-                            fullWidth 
-                            margin="dense" 
-                            name="name" 
-                            label="Name" 
-                            variant="outlined" 
-                            value={signupData.name} 
-                            onChange={handleSignupChange} 
-                        />
                         <TextField 
                             fullWidth 
                             margin="dense" 
@@ -122,10 +143,38 @@ export default function Login() {
                             margin="dense" 
                             name="password" 
                             label="Password" 
-                            type="password" 
+                            type={showPassword ? "text" : "password"} 
                             variant="outlined" 
                             value={signupData.password} 
                             onChange={handleSignupChange} 
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <TextField 
+                            fullWidth 
+                            margin="dense" 
+                            name="confirmPassword" 
+                            label="Confirm Password" 
+                            type={showConfirmPassword ? "text" : "password"} 
+                            variant="outlined" 
+                            value={signupData.confirmPassword} 
+                            onChange={handleSignupChange} 
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
                         />
                     </DialogContent>
                     <DialogActions>
@@ -133,7 +182,33 @@ export default function Login() {
                             Cancel
                         </Button>
                         <Button type="submit" variant="contained" color="secondary">
-                            Sign Up
+                            Send OTP
+                        </Button>
+                    </DialogActions>
+                </form>
+            </Dialog>
+
+            {/* OTP Verification Dialog */}
+            <Dialog open={otpOpen} onClose={() => setOtpOpen(false)}>
+                <DialogTitle>Verify OTP</DialogTitle>
+                <form onSubmit={handleVerifyOTP}>
+                    <DialogContent>
+                        <TextField 
+                            fullWidth 
+                            margin="dense" 
+                            name="otp" 
+                            label="Enter OTP" 
+                            variant="outlined" 
+                            value={otp} 
+                            onChange={(e) => setOtp(e.target.value)} 
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOtpOpen(false)} color="secondary">
+                            Cancel
+                        </Button>
+                        <Button type="submit" variant="contained" color="secondary">
+                            Verify OTP
                         </Button>
                     </DialogActions>
                 </form>
