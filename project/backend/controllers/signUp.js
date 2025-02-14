@@ -100,6 +100,86 @@ const verifyOTP = async (req, res) => {
     }
 };
 
+// Forgot Password - Send OTP
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    const otp = generateOTP();
+    const expiry = new Date(Date.now() + 10 * 60000); // OTP valid for 10 minutes
+
+    try {
+        // Hash the OTP before storing
+        const hashedOTP = await bcrypt.hash(otp, 10);
+
+        // Check if the user exists
+        const [rows] = await pool.execute("SELECT email FROM loginDetails WHERE email = ?", [email]);
+
+        if (rows.length === 0) {
+            return res.status(400).json({ message: "Email not found" });
+        }
+
+        // Update the OTP and expiry time in the database
+        await pool.execute(
+            "UPDATE loginDetails SET otp = ?, otp_expiry = ? WHERE email = ?",
+            [hashedOTP, expiry, email]
+        );
+
+        // Send OTP via email
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: "Password Reset OTP",
+            text: `Your OTP for password reset is ${otp}. It will expire in 10 minutes.`
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.json({ message: "OTP sent for password reset" });
+    } catch (error) {
+        console.error("Error sending OTP for password reset:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// Reset Password
+const resetPassword = async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    try {
+        // Fetch OTP from the database
+        const [rows] = await pool.execute("SELECT otp, otp_expiry FROM loginDetails WHERE email = ?", [email]);
+
+        if (rows.length === 0) {
+            return res.status(400).json({ message: "Email not found" });
+        }
+
+        const { otp: hashedOTP, otp_expiry } = rows[0];
+
+        // Check if OTP is expired
+        if (new Date(otp_expiry) < new Date()) {
+            return res.status(400).json({ message: "OTP expired" });
+        }
+
+        // Compare the entered OTP with the stored hash
+        const isOTPValid = await bcrypt.compare(otp, hashedOTP);
+        if (!isOTPValid) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+
+        // Hash the new password before updating
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update user password
+        await pool.execute(
+            "UPDATE loginDetails SET password = ?, otp = NULL, otp_expiry = NULL WHERE email = ?",
+            [hashedPassword, email]
+        );
+
+        res.json({ message: "Password reset successfully" });
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
 async function handleUserSignUp(req, res) {
     const { name, email, password } = req.body;
 
@@ -157,5 +237,5 @@ async function handleUserLogin(req, res) {
 }
 
 module.exports = {
-    handleUserSignUp, handleUserLogin,sendOTP,verifyOTP
+    handleUserSignUp, handleUserLogin,sendOTP,verifyOTP,forgotPassword,resetPassword
 };

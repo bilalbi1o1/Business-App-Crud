@@ -291,3 +291,17 @@
 1739440156931: POST: /api/signUp/login
 1739440157203: GET: /api/users
 1739440157241: GET: /api/users
+1739511709036: POST: /api/signUp/login
+1739511727426: POST: /api/signUp/login
+1739511727897: GET: /api/users
+1739511728007: GET: /api/users
+1739511738982: GET: /api/users
+1739511739007: GET: /api/users
+1739511744635: GET: /api/users
+1739511744655: GET: /api/users
+1739512940825: POST: /api/signUp/forgot-password
+1739513147325: POST: /api/signUp/forgot-password
+1739513183592: POST: /api/signUp/reset-password
+1739513196593: POST: /api/signUp/login
+1739513196882: GET: /api/users
+1739513196947: GET: /api/users
