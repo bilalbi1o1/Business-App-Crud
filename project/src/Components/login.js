@@ -18,7 +18,7 @@ export default function Login() {
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
     const [signupOpen, setSignupOpen] = useState(false);
     const [otpOpen, setOtpOpen] = useState(false);
-    const [signupData, setSignupData] = useState({ email: "", password: "", confirmPassword: "" });
+    const [signupData, setSignupData] = useState({ name: "", email: "", password: "", confirmPassword: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [otp, setOtp] = useState("");
@@ -43,7 +43,7 @@ export default function Login() {
             });
             response = response.data;
             if (response.token) {
-                localStorage.setItem('login', JSON.stringify({ login: true, token: response.token }));
+                localStorage.setItem('login', JSON.stringify({ login: true, token: response.token, name:response.name }));
                 setSnackbar({ open: true, message: 'Logged in successfully', severity: 'success' });
                 navigate('/Records');
             }
@@ -58,6 +58,11 @@ export default function Login() {
         // ✅ Frontend Validation: Check if passwords match
         if (signupData.password !== signupData.confirmPassword) {
             setSnackbar({ open: true, message: 'Passwords do not match', severity: 'error' });
+            return;
+        }
+
+        if (!signupData.name) {
+            setSnackbar({ open: true, message: 'Name Field is empty', severity: 'error' });
             return;
         }
 
@@ -147,22 +152,22 @@ export default function Login() {
                         </Button>
                     </Box>
                     <Box mt={2} textAlign="center" >
-                            <Button onClick={() => setForgotPasswordOpen(true)} color="primary">Forgot Password?</Button>
-                        </Box>
+                        <Button onClick={() => setForgotPasswordOpen(true)} color="primary">Forgot Password?</Button>
+                    </Box>
                 </form>
             </Paper>
 
-             {/* Forgot Password Dialog */}
-             <Dialog open={forgotPasswordOpen} onClose={() => setForgotPasswordOpen(false)}>
+            {/* Forgot Password Dialog */}
+            <Dialog open={forgotPasswordOpen} onClose={() => setForgotPasswordOpen(false)}>
                 <DialogTitle>Forgot Password</DialogTitle>
                 <DialogContent>
-                    <TextField 
-                        fullWidth 
-                        margin="dense" 
-                        label="Enter Email" 
-                        type="email" 
-                        value={signupData.email} 
-                        onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))} 
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="Enter Email"
+                        type="email"
+                        value={signupData.email}
+                        onChange={(e) => setSignupData(prev => ({ ...prev, email: e.target.value }))}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -175,20 +180,20 @@ export default function Login() {
             <Dialog open={resetPasswordOpen} onClose={() => setResetPasswordOpen(false)}>
                 <DialogTitle>Reset Password</DialogTitle>
                 <DialogContent>
-                    <TextField 
-                        fullWidth 
-                        margin="dense" 
-                        label="Enter OTP" 
-                        value={otp} 
-                        onChange={(e) => setOtp(e.target.value)} 
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="Enter OTP"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
                     />
-                    <TextField 
-                        fullWidth 
-                        margin="dense" 
-                        label="New Password" 
-                        type="password" 
-                        value={newPassword} 
-                        onChange={(e) => setNewPassword(e.target.value)} 
+                    <TextField
+                        fullWidth
+                        margin="dense"
+                        label="New Password"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -202,6 +207,16 @@ export default function Login() {
                 <DialogTitle>Sign Up</DialogTitle>
                 <form onSubmit={handleSendOTP}>
                     <DialogContent>
+                        <TextField
+                            fullWidth
+                            margin="dense"
+                            name="name"
+                            label="Name"
+                            type="text"
+                            variant="outlined"
+                            value={signupData.name}
+                            onChange={handleSignupChange}
+                        />
                         <TextField
                             fullWidth
                             margin="dense"

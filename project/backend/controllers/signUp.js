@@ -89,8 +89,8 @@ const verifyOTP = async (req, res) => {
 
         // Update user password
         await pool.execute(
-            "UPDATE loginDetails SET password = ?, otp = NULL, otp_expiry = NULL WHERE email = ?",
-            [hashedPassword, email]
+            "UPDATE loginDetails SET password = ?, name = ?, otp = NULL, otp_expiry = NULL WHERE email = ?",
+            [hashedPassword,name, email]
         );
 
         res.json({ message: "User verified and registered successfully" });
@@ -228,7 +228,7 @@ async function handleUserLogin(req, res) {
         }
 
         const token = await setUser(user);
-        return res.json({token: token });
+        return res.json({token: token,name: user.name });
 
     } catch (error) {
         console.error('Error during user login:', error);

@@ -4,19 +4,14 @@ const secret = process.env.SECRET;
 
 async function setUser(user) {
     token = jwt.sign(user,secret,
-        {expiresIn: '1h'}
+        {expiresIn: '365d'}
     );
-    console.log("SECRET:", process.env.SECRET);
-    console.log("GeneratedToken:", token);
     return token;
 }
 
 async function getUser(token) {
     try {
         if (!token) return null;
-        console.log("SECRET:", process.env.SECRET);
-        console.log("Verifying token:", token);
-        
         return jwt.verify(token, secret);
     } catch (error) {
         console.error("Error verifying token:", error.message);

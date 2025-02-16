@@ -25,12 +25,17 @@ const Project = () => {
         { id: 'cellNumber', name: 'Phone Cell' },
         { id: 'phoneNumber', name: 'Phone Home' },
         { id: 'employeeName', name: 'Employ Name' },
-        { id: 'pickupDate', name: 'PickUp Date' },
+        { id: 'pickUpTime', name: 'PickUp Time' },
+        { id: 'dateTime', name: 'Date & Time' },
         { id: 'remarks', name: 'Remarks' },
     ]
 
     const [open, openChange] = useState(false);
     const navigate = useNavigate();
+
+    const storedData = localStorage.getItem('login');
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+    const userName = parsedData ? parsedData.name : "Guest";
 
     useEffect(() => {
         fetchData();
@@ -45,7 +50,6 @@ const Project = () => {
             }
 
             const { token } = JSON.parse(loginData);
-            console.log('Retrieved token:', token); // Log the token to see if it's being retrieved
 
             const response = await axios.get(`${Backend}/api/users`, {
                 headers: {
@@ -59,8 +63,6 @@ const Project = () => {
             // console.error('Error fetching data:', error);
         }
     };
-
-
 
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();
@@ -79,7 +81,8 @@ const Project = () => {
     const [cellNumber, cellNumberChange] = useState('');
     const [phoneNumber, phoneNumberChange] = useState('');
     const [employeeName, employNameChange] = useState('');
-    const [pickupDate, pickupDateChange] = useState('');
+    const [pickUpTime, pickUpTimeChange] = useState('');
+    const [dateTime, dateTimeChange] = useState('');
     const [remarks, remarksChange] = useState('');
     const [rowPerPage, rowPerPageChange] = useState(4);
     const [page, pageChange] = useState(0);
@@ -96,8 +99,8 @@ const Project = () => {
     const handleDateChange = event => {
         dateChange(event.target.value);
     };
-    const handlePickupDateChange = event => {
-        pickupDateChange(event.target.value);
+    const handlepickUpTimeChange = event => {
+        pickUpTimeChange(event.target.value);
     };
 
     const closePopUp = () => {
@@ -118,13 +121,14 @@ const Project = () => {
         cellNumberChange('');
         phoneNumberChange('');
         employNameChange('');
-        pickupDateChange('');
+        pickUpTimeChange('');
+        dateTimeChange('');
         remarksChange('');
     }
 
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
-        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imei, product, price, remarks, email, cellNumber, phoneNumber, pickupDate: formatDate(pickupDate), employeeName };
+        const _obj = { ref, firstName, lastName, date: formatDate(date), notes, issue, imei, product, price, remarks, email, cellNumber, phoneNumber, pickUpTime: pickUpTime, dateTime, employeeName };
         console.log(_obj);
 
         const storedData = localStorage.getItem('login'); // Get stored JSON string
@@ -154,8 +158,6 @@ const Project = () => {
                 const parsedData = storedData ? JSON.parse(storedData) : null; // Parse it to an object
                 const token = parsedData ? parsedData.token : null;
 
-                console.log('Token being sent:', token); // Debugging step
-
                 axios.delete(`${Backend}/api/users/${ref}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -184,17 +186,25 @@ const Project = () => {
     };
 
     const editRecord = (ref) => {
-        // Find the user object with the provided userId
+        // Find the user object with the provided ref
         const userToEdit = users.find(user => user.ref === ref);
+        // Check if userToEdit exists
+        if (!userToEdit) {
+            console.error(`User with ref ${ref} not found`);
+            return;
+        }
+    
+        // Check if date exists before calling split
+        const formattedDate = userToEdit.date ? userToEdit.date.split("T")[0] : "";
 
         // Update state to store the user being edited
         setEditedUser(userToEdit);
-
+    
         // Prefill the form fields with the user data
         refChange(userToEdit.ref);
         firstNameChange(userToEdit.firstName);
         lastNameChange(userToEdit.lastName);
-        dateChange(userToEdit.date.split("T")[0]); // Extract date part from ISO 8601 string
+        dateChange(formattedDate);
         productChange(userToEdit.product);
         issueChange(userToEdit.issue);
         imeiChange(userToEdit.imei);
@@ -204,11 +214,13 @@ const Project = () => {
         cellNumberChange(userToEdit.cellNumber);
         phoneNumberChange(userToEdit.phoneNumber);
         employNameChange(userToEdit.employeeName);
-        pickupDateChange(userToEdit.pickupDate.split("T")[0]); // Extract date part from ISO 8601 string
+        pickUpTimeChange(userToEdit.pickupTime);
+        dateTimeChange(userToEdit.dateTime);
         remarksChange(userToEdit.remarks);
-
+    
         openEditDialog();
     };
+    
 
     return (
         <div>
@@ -221,6 +233,10 @@ const Project = () => {
                     onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
                     sx={{ backgroundColor: "#fff", borderRadius: "5px", minWidth: "200px" }}
                 />
+                {/* Left Section: User Greeting */}
+                <div style={{ flex: 1, textAlign: "left", paddingLeft: "10px" }}>
+                    <h2 style={{ margin: 0 }}>Hi, {userName}</h2>
+                </div>
                 <Button color="inherit" variant="outlined" onClick={() => { localStorage.removeItem('login'); navigate('/'); }}>
                     Logout
                 </Button>
@@ -251,6 +267,7 @@ const Project = () => {
                                             String(value).toLowerCase().includes(searchQuery)
                                         )
                                     )
+                                    .sort((a, b) => b.ref - a.ref)
                                     .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
                                     .map((user) => (
                                         <TableRow key={user.ref}>
@@ -267,7 +284,8 @@ const Project = () => {
                                             <TableCell>{user.cellNumber}</TableCell>
                                             <TableCell>{user.phoneNumber}</TableCell>
                                             <TableCell>{user.employeeName}</TableCell>
-                                            <TableCell>{user.pickupDate}</TableCell>
+                                            <TableCell>{user.pickupTime}</TableCell>
+                                            <TableCell>{user.dateTime}</TableCell>
                                             <TableCell>{user.remarks}</TableCell>
                                             <TableCell style={{ display: "flex" }} >
                                                 <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
@@ -324,14 +342,23 @@ const Project = () => {
                             <TextField value={phoneNumber} onChange={e => { phoneNumberChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
                             <TextField value={employeeName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
                             <TextField
-                                label="PickUp Date"
-                                type="date"
+                                label="PickUp Time"
+                                type="time"
                                 variant="outlined"
-                                value={pickupDate}
-                                onChange={handlePickupDateChange}
+                                value={pickUpTime}
+                                onChange={handlepickUpTimeChange}
                                 InputLabelProps={{
                                     shrink: true,
                                 }} />
+                            <TextField
+                                label="Date & Time"
+                                type="datetime-local"
+                                variant="outlined"
+                                value={dateTime}
+                                onChange={e => dateTimeChange(e.target.value)}
+                                InputLabelProps={{ shrink: true }}
+                            />
+
                             <TextField multiline maxRows={2} minRows={2} value={remarks} onChange={e => { remarksChange(e.target.value) }} variant="outlined" label="Remarks" ></TextField>
                             <Button variant='contained' type="submit">
                                 {'Update'}

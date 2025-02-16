@@ -10,7 +10,6 @@ async function checkForAuthentication(req, res, next) {
 
     // ✅ Correct token extraction
     const token = authorizationHeaderValue.replace("Bearer ", "").trim();
-    console.log("Extracted Token:", token);
 
     try {
         const user = await getUser(token); // ✅ Use `await`
