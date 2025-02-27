@@ -37,6 +37,10 @@ const Project = () => {
     const storedData = localStorage.getItem('login');
     const parsedData = storedData ? JSON.parse(storedData) : null;
     const userName = parsedData ? parsedData.name : "Guest";
+    const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [emailRemarks, setEmailRemarks] = useState('');
+
 
     useEffect(() => {
         fetchData();
@@ -46,7 +50,7 @@ const Project = () => {
         const printWindow = window.open('', '_blank');
 
         printWindow.document.write(`
-            <!DOCTYPE html>
+      <!DOCTYPE html>
 <html>
 <head>
     <title>Tech Buy</title>
@@ -58,7 +62,14 @@ const Project = () => {
             padding: 20px;
             background-color: #f5f5f5;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
@@ -68,6 +79,7 @@ const Project = () => {
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px; /* Space between duplicates */
         }
 
         /* Header Styles */
@@ -119,12 +131,26 @@ const Project = () => {
             color: #003366;
         }
 
+        /* Center Logo */
+        .container img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
         /* Print Media Query */
         @media print {
             body {
                 margin: 0;
                 padding: 0;
                 background: none;
+                display: block;
+            }
+
+            .container-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .container {
@@ -132,6 +158,7 @@ const Project = () => {
                 padding: 10px;
                 box-shadow: none;
                 border: none;
+                page-break-after: avoid; /* Prevents page break */
             }
 
             h2 {
@@ -151,36 +178,70 @@ const Project = () => {
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header and Contact Information -->
-        <h2>Tech Buy</h2>
-        <div class="contact-info">
-            <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
-            <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
-        </div>
-
-        <!-- Print Container with User Details -->
-        <div class="print-container">
-            <div class="column">
-                <p><strong>Ref #:</strong> ${user.ref}</p>
-                <p><strong>Date:</strong> ${user.date}</p>
-                <p><strong>First Name:</strong> ${user.firstName}</p>
-                <p><strong>Last Name:</strong> ${user.lastName}</p>
-                <p><strong>Product:</strong> ${user.product}</p>
-                <p><strong>Issue:</strong> ${user.issue}</p>
-                <p><strong>IMEI S/N:</strong> ${user.imei}</p>
-                <p><strong>Notes:</strong> ${user.notes}</p>
-                <p><strong>Price:</strong> ${user.price}</p>
+    <div class="container-wrapper">
+        <!-- First Copy -->
+        <div class="container">
+            <!-- Header and Contact Information -->
+            <img src="/techBuy.jpg" alt="Tech Buy Logo" />
+            <div class="contact-info">
+                <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
+                <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
             </div>
 
-            <div class="column">
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
-                <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
-                <p><strong>Employee Name:</strong> ${user.employeeName}</p>
-                <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
-                <p><strong>Date & Time:</strong> ${user.dateTime}</p>
-                <p><strong>Remarks:</strong> ${user.remarks}</p>
+            <!-- Print Container with User Details -->
+            <div class="print-container">
+                <div class="column">
+                    <p><strong>Ref #:</strong> ${user.ref}</p>
+                    <p><strong>Date:</strong> ${user.date}</p>
+                    <p><strong>First Name:</strong> ${user.firstName}</p>
+                    <p><strong>Last Name:</strong> ${user.lastName}</p>
+                    <p><strong>Product:</strong> ${user.product}</p>
+                    <p><strong>Issue:</strong> ${user.issue}</p>
+                    <p><strong>IMEI S/N:</strong> ${user.imei}</p>
+                    <p><strong>Price:</strong> ${user.price}</p>
+                </div>
+
+                <div class="column">
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
+                    <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
+                    <p><strong>Employee Name:</strong> ${user.employeeName}</p>
+                    <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
+                    <p><strong>Date & Time:</strong> ${user.dateTime}</p>
+                    <p><strong>Remarks:</strong> ${user.remarks}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Copy -->
+        <div class="container">
+            <img src="/techBuy.jpg" alt="Tech Buy Logo" />
+            <div class="contact-info">
+                <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
+                <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
+            </div>
+
+            <div class="print-container">
+                <div class="column">
+                    <p><strong>Ref #:</strong> ${user.ref}</p>
+                    <p><strong>Date:</strong> ${user.date}</p>
+                    <p><strong>First Name:</strong> ${user.firstName}</p>
+                    <p><strong>Last Name:</strong> ${user.lastName}</p>
+                    <p><strong>Product:</strong> ${user.product}</p>
+                    <p><strong>Issue:</strong> ${user.issue}</p>
+                    <p><strong>IMEI S/N:</strong> ${user.imei}</p>
+                    <p><strong>Price:</strong> ${user.price}</p>
+                </div>
+
+                <div class="column">
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
+                    <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
+                    <p><strong>Employee Name:</strong> ${user.employeeName}</p>
+                    <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
+                    <p><strong>Date & Time:</strong> ${user.dateTime}</p>
+                    <p><strong>Remarks:</strong> ${user.remarks}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -192,7 +253,8 @@ const Project = () => {
         };
     </script>
 </body>
-</html>`);
+</html>
+`);
 
         printWindow.document.close();
     };
@@ -219,6 +281,12 @@ const Project = () => {
             // console.error('Error fetching data:', error);
         }
     };
+
+    const handleOpenEmailDialog = (user) => {
+        setSelectedUser(user);
+        setEmailDialogOpen(true);
+    };
+
 
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();
@@ -377,6 +445,57 @@ const Project = () => {
         openEditDialog();
     };
 
+    const handleSendEmail = async () => {
+        if (!selectedUser || !emailRemarks.trim()) {
+            alert("Please enter remarks before sending.");
+            return;
+        }
+    
+        try {
+            const loginData = localStorage.getItem("login"); // Get token from localStorage
+            if (!loginData) {
+                alert("You are not logged in. Please log in first.");
+                return;
+            }
+    
+            const { token } = JSON.parse(loginData);
+    
+            // Log the data before sending
+            console.log("Sending request to:", `${Backend}/api/users/send-email`);
+            console.log("Request Headers:", {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            });
+            console.log("Request Body:", {
+                email: selectedUser.email,
+                firstName: selectedUser.firstName,
+                lastName: selectedUser.lastName,
+                remarks: emailRemarks,
+            });
+    
+            const response = await axios.post(
+                `${Backend}/api/users/send-email`,
+                {
+                    email: selectedUser.email,
+                    firstName: selectedUser.firstName,
+                    lastName: selectedUser.lastName,
+                    remarks: emailRemarks,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Attach token
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+    
+            alert(response.data.message);
+            setEmailDialogOpen(false);
+        } catch (error) {
+            console.error("Error sending email:", error.response?.data || error.message);
+            alert(`Failed to send email: ${error.response?.data?.message || error.message}`);
+        }
+    };
 
     return (
         <div>
@@ -447,6 +566,7 @@ const Project = () => {
                                                 <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
                                                 <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
                                                 <Button color='success' variant="contained" style={{ margin: "2px" }} onClick={() => printUser(user)}>Print</Button>
+                                                <Button color="secondary" variant="contained" style={{ margin: "2px" }} onClick={() => handleOpenEmailDialog(user)}>Email</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -524,6 +644,27 @@ const Project = () => {
                     </form>
                 </DialogContent>
             </Dialog>
+            <Dialog open={emailDialogOpen} onClose={() => setEmailDialogOpen(false)} fullWidth maxWidth="sm">
+                <DialogTitle>Send Email</DialogTitle>
+                <DialogContent>
+                    <Stack spacing={2} margin={2}>
+                        <TextField label="Recipient Email" value={selectedUser?.email || ''} disabled fullWidth />
+                        <TextField label="Recipient Name" value={`${selectedUser?.firstName} ${selectedUser?.lastName}`} disabled fullWidth />
+                        <TextField
+                            label="Remarks"
+                            multiline
+                            minRows={3}
+                            value={emailRemarks}
+                            onChange={(e) => setEmailRemarks(e.target.value)}
+                            fullWidth
+                        />
+                        <Button variant="contained" color="primary" onClick={handleSendEmail}>
+                            Send Email
+                        </Button>
+                    </Stack>
+                </DialogContent>
+            </Dialog>
+
         </div>
     )
 }
