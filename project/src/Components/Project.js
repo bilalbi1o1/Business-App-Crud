@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ReactToPrint } from 'react-to-print';
+import { printUser } from "./printUser";
 import axios from 'axios';
 import {
     TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button,
@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import './project.css';
 import { Link, useNavigate } from 'react-router-dom';
+import Signup from "./signup";
 
 const Backend = process.env.REACT_APP_BACKEND;
 
@@ -20,7 +21,7 @@ const Project = () => {
         { id: 'product', name: 'Product' },
         { id: 'issue', name: 'Issue' },
         { id: 'imei', name: 'IMEI' },
-        { id: 'notes', name: 'Notes' },
+        { id: 'notes', name: 'Technician Notes' },
         { id: 'price', name: 'Price' },
         { id: 'email', name: 'Email' },
         { id: 'cellNumber', name: 'Phone Cell' },
@@ -28,7 +29,7 @@ const Project = () => {
         { id: 'employeeName', name: 'Employ Name' },
         { id: 'pickUpTime', name: 'PickUp Time' },
         { id: 'dateTime', name: 'Date & Time' },
-        { id: 'remarks', name: 'Remarks' },
+        { id: 'remarks', name: 'Customer Remarks' },
     ]
 
     const [open, openChange] = useState(false);
@@ -40,225 +41,13 @@ const Project = () => {
     const [emailDialogOpen, setEmailDialogOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [emailRemarks, setEmailRemarks] = useState('');
+    const [signupOpen, setSignupOpen] = useState(false);
 
 
     useEffect(() => {
         fetchData();
     }, []);
-
-    const printUser = (user) => {
-        const printWindow = window.open('', '_blank');
-
-        printWindow.document.write(`
-      <!DOCTYPE html>
-<html>
-<head>
-    <title>Tech Buy</title>
-    <style>
-        /* Global Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px; /* Space between duplicates */
-        }
-
-        /* Header Styles */
-        h2 {
-            text-align: center;
-            color: #003366;
-            font-size: 24px;
-            margin: 0 0 10px;
-        }
-
-        .contact-info {
-            text-align: center;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 5px;
-        }
-
-        .contact-info p {
-            margin: 2px 0;
-            font-size: 12px;
-            color: #555;
-        }
-
-        /* Print Container */
-        .print-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        /* Column Styles */
-        .column {
-            font-size: 12px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        .column p {
-            margin: 2px 0;
-            padding: 2px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .column p:last-child {
-            border-bottom: none;
-        }
-
-        .column strong {
-            color: #003366;
-        }
-
-        /* Center Logo */
-        .container img {
-            display: block;
-            margin: 0 auto;
-            max-width: 100%;
-        }
-
-        /* Print Media Query */
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-                background: none;
-                display: block;
-            }
-
-            .container-wrapper {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .container {
-                max-width: 100%;
-                padding: 10px;
-                box-shadow: none;
-                border: none;
-                page-break-after: avoid; /* Prevents page break */
-            }
-
-            h2 {
-                font-size: 20px;
-                margin-bottom: 5px;
-            }
-
-            .contact-info p {
-                font-size: 10px;
-            }
-
-            .column {
-                font-size: 10px;
-                line-height: 1.2;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container-wrapper">
-        <!-- First Copy -->
-        <div class="container">
-            <!-- Header and Contact Information -->
-            <img src="/techBuy.jpg" alt="Tech Buy Logo" />
-            <div class="contact-info">
-                <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
-                <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
-            </div>
-
-            <!-- Print Container with User Details -->
-            <div class="print-container">
-                <div class="column">
-                    <p><strong>Ref #:</strong> ${user.ref}</p>
-                    <p><strong>Date:</strong> ${user.date}</p>
-                    <p><strong>First Name:</strong> ${user.firstName}</p>
-                    <p><strong>Last Name:</strong> ${user.lastName}</p>
-                    <p><strong>Product:</strong> ${user.product}</p>
-                    <p><strong>Issue:</strong> ${user.issue}</p>
-                    <p><strong>IMEI S/N:</strong> ${user.imei}</p>
-                    <p><strong>Price:</strong> ${user.price}</p>
-                </div>
-
-                <div class="column">
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
-                    <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
-                    <p><strong>Employee Name:</strong> ${user.employeeName}</p>
-                    <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
-                    <p><strong>Date & Time:</strong> ${user.dateTime}</p>
-                    <p><strong>Remarks:</strong> ${user.remarks}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Copy -->
-        <div class="container">
-            <img src="/techBuy.jpg" alt="Tech Buy Logo" />
-            <div class="contact-info">
-                <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
-                <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
-            </div>
-
-            <div class="print-container">
-                <div class="column">
-                    <p><strong>Ref #:</strong> ${user.ref}</p>
-                    <p><strong>Date:</strong> ${user.date}</p>
-                    <p><strong>First Name:</strong> ${user.firstName}</p>
-                    <p><strong>Last Name:</strong> ${user.lastName}</p>
-                    <p><strong>Product:</strong> ${user.product}</p>
-                    <p><strong>Issue:</strong> ${user.issue}</p>
-                    <p><strong>IMEI S/N:</strong> ${user.imei}</p>
-                    <p><strong>Price:</strong> ${user.price}</p>
-                </div>
-
-                <div class="column">
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
-                    <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
-                    <p><strong>Employee Name:</strong> ${user.employeeName}</p>
-                    <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
-                    <p><strong>Date & Time:</strong> ${user.dateTime}</p>
-                    <p><strong>Remarks:</strong> ${user.remarks}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        window.onload = function() {
-            window.print();
-            window.close();
-        };
-    </script>
-</body>
-</html>
-`);
-
-        printWindow.document.close();
-    };
-
+ 
 
     const fetchData = async () => {
         try {
@@ -512,6 +301,7 @@ const Project = () => {
                 <div style={{ flex: 1, textAlign: "left", paddingLeft: "10px" }}>
                     <h2 style={{ margin: 0 }}>Hi, {userName}</h2>
                 </div>
+                <Button onClick={() => setSignupOpen(true)} color="inherit">Sign Up</Button>
                 <Button color="inherit" variant="outlined" onClick={() => { localStorage.removeItem('login'); navigate('/'); }}>
                     Logout
                 </Button>
@@ -651,7 +441,7 @@ const Project = () => {
                         <TextField label="Recipient Email" value={selectedUser?.email || ''} disabled fullWidth />
                         <TextField label="Recipient Name" value={`${selectedUser?.firstName} ${selectedUser?.lastName}`} disabled fullWidth />
                         <TextField
-                            label="Remarks"
+                            label="Message"
                             multiline
                             minRows={3}
                             value={emailRemarks}
@@ -664,10 +454,9 @@ const Project = () => {
                     </Stack>
                 </DialogContent>
             </Dialog>
-
+            <Signup open={signupOpen} onClose={() => setSignupOpen(false)} />
         </div>
     )
 }
 
 export default Project;
-

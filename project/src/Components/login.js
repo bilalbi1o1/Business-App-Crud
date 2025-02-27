@@ -147,9 +147,6 @@ export default function Login() {
                         <Button type="submit" variant="contained" color="primary" sx={{ flexGrow: 1, mr: 1 }}>
                             Login
                         </Button>
-                        <Button variant="outlined" color="secondary" sx={{ flexGrow: 1 }} onClick={() => setSignupOpen(true)}>
-                            Sign Up
-                        </Button>
                     </Box>
                     <Box mt={2} textAlign="center" >
                         <Button onClick={() => setForgotPasswordOpen(true)} color="primary">Forgot Password?</Button>

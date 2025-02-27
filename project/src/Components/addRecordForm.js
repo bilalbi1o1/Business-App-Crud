@@ -5,6 +5,7 @@ import { Button, TextField, Typography, Paper, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { printUser } from './printUser';
 import './addRecordForm.css';
 
 const Backend = process.env.REACT_APP_BACKEND;
@@ -24,16 +25,19 @@ const AddUserForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "", lastName: "", date: "", dateTime: "", product: "", issue: "",
+      firstName: "", lastName: "", date: new Date().toISOString().split('T')[0],
+      dateTime: new Date().toISOString().slice(0, 16),
+      product: "", issue: "",
       imei: "", notes: "", price: "", email: "", cellNumber: "",
-      phoneNumber: "", employeeName: "", pickupTime: "", remarks: ""
+      phoneNumber: "", employeeName: "", 
+      pickupTime: new Date().toTimeString().slice(0, 5), remarks: ""
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("First name is required"),
       lastName: Yup.string().required("Last name is required"),
       product: Yup.string().required("Product name is required"),
       issue: Yup.string().required("Issue description is required"),
-      imei: Yup.string().matches(/^\d{15}$/, "IMEI must be exactly 15 digits").required("IMEI is required"),
+      imei: Yup.string().matches(/^\d{15}$/, "IMEI must be exactly 15 digits"),
       price: Yup.number().positive("Price must be a positive number").required("Price is required"),
       email: Yup.string().email("Invalid email format").required("Email is required"),
       cellNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number").required("Cell number is required"),
@@ -41,8 +45,7 @@ const AddUserForm = () => {
       employeeName: Yup.string().required("Employee name is required"),
       date: Yup.date().required("Date is required"),
       dateTime: Yup.date().required("Date & Time is required"),
-      pickupTime: Yup.string().required("Pickup time is required"),
-      remarks: Yup.string().min(5, "Remarks must be at least 5 characters long")
+      pickupTime: Yup.string(),
     }),
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       const storedData = JSON.parse(localStorage.getItem('login') || '{}');
@@ -59,6 +62,7 @@ const AddUserForm = () => {
         console.error('Error adding record:', error);
       } finally {
         setSubmitting(false);
+        printUser(values);
         navigate('/Records');
       }
     }
@@ -85,7 +89,7 @@ const AddUserForm = () => {
               { name: 'issue', label: 'Issue' }, { name: 'imei', label: 'IMEI' },
               { name: 'price', label: 'Price' }, { name: 'email', label: 'Email' },
               { name: 'cellNumber', label: 'Cell Number' }, { name: 'phoneNumber', label: 'Phone Number' },
-              { name: 'employeeName', label: 'Employee Name' }, { name: 'remarks', label: 'Remarks', multiline: true },
+              { name: 'employeeName', label: 'Employee Name' }, { name: 'remarks', label: 'Customer Remarks', multiline: true },
             ].map(field => (
               <TextField key={field.name} name={field.name} label={field.label}
                 value={formik.values[field.name]} onChange={formik.handleChange}
@@ -112,7 +116,7 @@ const AddUserForm = () => {
               helperText={formik.touched.pickupTime && formik.errors.pickupTime}
               variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
 
-            <TextField name='notes' label="Notes" multiline minRows={2}
+            <TextField name='notes' label="Technician Notes" multiline minRows={2}
               value={formik.values.notes} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.notes && Boolean(formik.errors.notes)}
               helperText={formik.touched.notes && formik.errors.notes}
