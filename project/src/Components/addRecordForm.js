@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { Button, TextField, Typography, Paper, Box } from '@mui/material';
+import { Button, TextField, Typography, Paper, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -12,6 +12,7 @@ const Backend = process.env.REACT_APP_BACKEND;
 
 const AddUserForm = () => {
   const navigate = useNavigate();
+  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("login");
@@ -21,6 +22,22 @@ const AddUserForm = () => {
     if (!token) {
       navigate("/error");
     }
+
+    // Fetch employee names from logindetailsTable
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get(`${Backend}/api/signUp`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log(response.data);
+        setEmployees(response.data);  // Assuming response.data is an array of objects with { firstName }
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
+
+    fetchEmployees();
+
   }, []);
 
   const formik = useFormik({
@@ -29,7 +46,7 @@ const AddUserForm = () => {
       dateTime: new Date().toISOString().slice(0, 16),
       product: "", issue: "",
       imei: "", notes: "", price: "", email: "", cellNumber: "",
-      phoneNumber: "", employeeName: "", 
+      phoneNumber: "", employeeName: "",
       pickupTime: new Date().toTimeString().slice(0, 5), remarks: ""
     },
     validationSchema: Yup.object({
@@ -89,7 +106,7 @@ const AddUserForm = () => {
               { name: 'issue', label: 'Issue' }, { name: 'imei', label: 'IMEI' },
               { name: 'price', label: 'Price' }, { name: 'email', label: 'Email' },
               { name: 'cellNumber', label: 'Cell Number' }, { name: 'phoneNumber', label: 'Phone Number' },
-              { name: 'employeeName', label: 'Employee Name' }, { name: 'remarks', label: 'Customer Remarks', multiline: true },
+              { name: 'remarks', label: 'Customer Remarks', multiline: true },
             ].map(field => (
               <TextField key={field.name} name={field.name} label={field.label}
                 value={formik.values[field.name]} onChange={formik.handleChange}
@@ -97,6 +114,28 @@ const AddUserForm = () => {
                 helperText={formik.touched[field.name] && formik.errors[field.name]}
                 variant="outlined" fullWidth multiline={field.multiline || false} color='secondary' />
             ))}
+
+            {/* Employee Name Dropdown */}
+            <FormControl fullWidth>
+              <InputLabel color='secondary' >Employee Name</InputLabel>
+              <Select
+                name="employeeName"
+                value={formik.values.employeeName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                color="secondary"
+                variant="outlined"
+                error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                sx={{ textAlign: "left" }} // Ensures selected item is left-aligned
+                MenuProps={{ PaperProps: { sx: { textAlign: "left" } } }} // Ensures menu items are also left-aligned
+              >
+                {employees.map((employee, index) => (
+                  <MenuItem key={index} value={employee.name}>
+                    {employee.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             <TextField name='date' label="Date" type="date"
               value={formik.values.date} onChange={formik.handleChange} onBlur={formik.handleBlur}
