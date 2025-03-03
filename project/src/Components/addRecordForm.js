@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { printUser } from './printUser';
 import './addRecordForm.css';
+import { DateTime } from 'luxon';
 
 const Backend = process.env.REACT_APP_BACKEND;
 
@@ -38,6 +39,11 @@ const AddUserForm = () => {
 
     fetchEmployees();
 
+    const now = DateTime.now().setZone("America/Toronto"); // Get Toronto time
+    const formattedDateTime = now.toFormat("yyyy-MM-dd'T'HH:mm"); // Convert to datetime-local format
+
+    formik.setFieldValue("dateTime", formattedDateTime);
+
   }, []);
 
   const formik = useFormik({
@@ -47,7 +53,7 @@ const AddUserForm = () => {
       product: "", issue: "",
       imei: "", notes: "", price: "", email: "", cellNumber: "",
       phoneNumber: "", employeeName: "",
-      pickupTime: new Date().toTimeString().slice(0, 5), remarks: ""
+      pickupTime: "", remarks: ""
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("First name is required"),
