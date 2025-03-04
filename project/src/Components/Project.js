@@ -357,7 +357,7 @@ const Project = () => {
                                             <TableCell style={{ display: "flex" }} >
                                                 <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
                                                 <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
-                                                <Button color='success' variant="contained" style={{ margin: "2px" }} onClick={() => printUser(user)}>Print</Button>
+                                                <Button color='success' variant="contained" style={{ margin: "2px" }} onClick={() => printUser({ ...user, ref: String(user.ref).padStart(6, '0') })}>Print</Button>
                                                 <Button color="secondary" variant="contained" style={{ margin: "2px" }} onClick={() => handleOpenEmailDialog(user)}>Email</Button>
                                             </TableCell>
                                         </TableRow>

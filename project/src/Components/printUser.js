@@ -103,9 +103,9 @@ export const printUser = (user) => {
 <body>
 <div class="container-wrapper">
     <div class="container">
-        <img src="/techBuy.jpg" alt="Tech Buy Logo" />
+        <img src="https://techbuy.ca/image/cache/catalog/Banners/Logo/765x133n-765x133.png" />
         <div class="contact-info">
-            <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
+            <p>17310 Yonge St., Unit 12 A, Newmarket, Ontario, L3Y 7S1</p>
             <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
             <p>www.Techbuy.ca</p>
             <h2>Service Order</h2>
@@ -118,7 +118,6 @@ export const printUser = (user) => {
                 <p><strong>First Name:</strong> ${user.firstName}</p>
                 <p><strong>Last Name:</strong> ${user.lastName}</p>
                 <p><strong>Product:</strong> ${user.product}</p>
-                <p><strong>Issue:</strong> ${user.issue}</p>
                 <p><strong>IMEI S/N:</strong> ${user.imei}</p>
                 <p><strong>Price:</strong> ${user.price}</p>
                 <p><strong>Technician Notes:</strong> ${user.notes}</p>
@@ -130,6 +129,7 @@ export const printUser = (user) => {
                 <p><strong>Employee Name:</strong> ${user.employeeName}</p>
                 <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
                 <p><strong>Date & Time:</strong> ${user.dateTime}</p>
+                <p><strong>Issue:</strong> ${user.issue}</p>
                 <p><strong>Customer Remarks:</strong> ${user.remarks}</p>
             </div>
         </div>
@@ -138,14 +138,13 @@ export const printUser = (user) => {
     <div class="separator"></div>
 
     <div class="container">
-        <img src="/techBuy.jpg" alt="Tech Buy Logo" />
+        <img src="https://techbuy.ca/image/cache/catalog/Banners/Logo/765x133n-765x133.png" />
         <div class="contact-info">
-            <p>17310 Yonge St., Unit 12, Newmarket, Ontario, L3Y 7S1</p>
+            <p>17310 Yonge St., Unit 12 A, Newmarket, Ontario, L3Y 7S1</p>
             <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
             <p>www.Techbuy.ca</p>
             <h2>Service Order</h2>
         </div>
-        <p><strong>For Customer</strong></p>
         <div class="print-container">
             <div class="column">
                 <p><strong>Ref #:</strong> ${user.ref}</p>
@@ -153,7 +152,6 @@ export const printUser = (user) => {
                 <p><strong>First Name:</strong> ${user.firstName}</p>
                 <p><strong>Last Name:</strong> ${user.lastName}</p>
                 <p><strong>Product:</strong> ${user.product}</p>
-                <p><strong>Issue:</strong> ${user.issue}</p>
                 <p><strong>IMEI S/N:</strong> ${user.imei}</p>
                 <p><strong>Price:</strong> ${user.price}</p>
             </div>
@@ -161,9 +159,9 @@ export const printUser = (user) => {
                 <p><strong>Email:</strong> ${user.email}</p>
                 <p><strong>Phone Cell:</strong> ${user.cellNumber}</p>
                 <p><strong>Phone Home:</strong> ${user.phoneNumber}</p>
-                <p><strong>Employee Name:</strong> ${user.employeeName}</p>
                 <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
                 <p><strong>Date & Time:</strong> ${user.dateTime}</p>
+                <p><strong>Issue:</strong> ${user.issue}</p>
             </div>
         </div>
     </div>

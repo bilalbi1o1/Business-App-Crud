@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Button, TextField, Typography, Paper, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
@@ -13,7 +13,7 @@ const Backend = process.env.REACT_APP_BACKEND;
 
 const AddUserForm = () => {
   const navigate = useNavigate();
-  // const [employees, setEmployees] = useState([]);
+  const [generatedRef, setGeneratedRef] = useState('');
   const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
   useEffect(() => {
@@ -64,8 +64,8 @@ const AddUserForm = () => {
       imei: Yup.string().matches(/^\d{15}$/, "IMEI must be exactly 15 digits"),
       price: Yup.number().positive("Price must be a positive number").required("Price is required"),
       email: Yup.string().email("Invalid email format").required("Email is required"),
-      cellNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number").required("Cell number is required"),
-      phoneNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number").required("Phone number is required"),
+      cellNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number"),
+      phoneNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number"),
       employeeName: Yup.string().required("Employee name is required"),
       date: Yup.date().required("Date is required"),
       dateTime: Yup.date().required("Date & Time is required"),
@@ -74,11 +74,20 @@ const AddUserForm = () => {
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       const storedData = JSON.parse(localStorage.getItem('login') || '{}');
       const token = storedData.token || null;
+      let formattedRef = "000000";
+      let updatedValues = { ...values, ref: formattedRef };
 
       try {
-        await axios.post(`${Backend}/api/users`, values, {
+        const response = await axios.post(`${Backend}/api/users`, values, {
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
         });
+
+        if (response.data && response.data.ref) {
+          formattedRef = String(response.data.ref).padStart(6, '0');
+          setGeneratedRef(formattedRef);
+        }
+        // Add the formatted reference ID to the object
+        updatedValues = { ...values, ref: formattedRef };
         alert('Record added successfully');
         resetForm();
       } catch (error) {
@@ -86,7 +95,7 @@ const AddUserForm = () => {
         console.error('Error adding record:', error);
       } finally {
         setSubmitting(false);
-        printUser(values);
+        printUser(updatedValues);
         navigate('/Records');
       }
     }
@@ -122,8 +131,8 @@ const AddUserForm = () => {
                 variant="outlined" fullWidth multiline={field.multiline || false} color='secondary' />
             ))}
 
-              {/* Employee Name Dropdown */}
-              <FormControl fullWidth>
+            {/* Employee Name Dropdown */}
+            <FormControl fullWidth>
               <InputLabel color='secondary'>Employee Name</InputLabel>
               <Select
                 name="employeeName"
@@ -133,6 +142,7 @@ const AddUserForm = () => {
                 color="secondary"
                 variant="outlined"
                 error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                style={{textAlign: "left"}}
               >
                 {employees.map((name, index) => (
                   <MenuItem key={index} value={name}>
