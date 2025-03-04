@@ -6,6 +6,7 @@ import {
     TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField,
     TablePagination
 } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import './project.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Signup from "./signup";
@@ -42,12 +43,13 @@ const Project = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [emailRemarks, setEmailRemarks] = useState('');
     const [signupOpen, setSignupOpen] = useState(false);
+    const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
 
     useEffect(() => {
         fetchData();
     }, []);
- 
+
 
     const fetchData = async () => {
         try {
@@ -239,16 +241,16 @@ const Project = () => {
             alert("Please enter remarks before sending.");
             return;
         }
-    
+
         try {
             const loginData = localStorage.getItem("login"); // Get token from localStorage
             if (!loginData) {
                 alert("You are not logged in. Please log in first.");
                 return;
             }
-    
+
             const { token } = JSON.parse(loginData);
-    
+
             // Log the data before sending
             console.log("Sending request to:", `${Backend}/api/users/send-email`);
             console.log("Request Headers:", {
@@ -261,7 +263,7 @@ const Project = () => {
                 lastName: selectedUser.lastName,
                 remarks: emailRemarks,
             });
-    
+
             const response = await axios.post(
                 `${Backend}/api/users/send-email`,
                 {
@@ -277,7 +279,7 @@ const Project = () => {
                     },
                 }
             );
-    
+
             alert(response.data.message);
             setEmailDialogOpen(false);
         } catch (error) {
@@ -407,7 +409,22 @@ const Project = () => {
                             <TextField value={email} onChange={e => { emailChange(e.target.value) }} variant="outlined" label="Email" ></TextField>
                             <TextField value={cellNumber} onChange={e => { cellNumberChange(e.target.value) }} variant="outlined" label="Cell Number" ></TextField>
                             <TextField value={phoneNumber} onChange={e => { phoneNumberChange(e.target.value) }} variant="outlined" label="Phone Number" ></TextField>
-                            <TextField value={employeeName} onChange={e => { employNameChange(e.target.value) }} variant="outlined" label="Employ Name" ></TextField>
+                            <FormControl fullWidth>
+                                <InputLabel color="secondary">Employee Name</InputLabel>
+                                <Select
+                                    value={employeeName}
+                                    onChange={e => employNameChange(e.target.value)}
+                                    variant="outlined"
+                                    color="secondary"
+                                >
+                                    {["Omer", "Chand", "Nadeem", "Jason", "Ali"].map((name) => (
+                                        <MenuItem key={name} value={name}>
+                                            {name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+
                             <TextField
                                 label="PickUp Time"
                                 type="time"

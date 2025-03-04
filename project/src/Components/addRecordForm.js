@@ -13,7 +13,8 @@ const Backend = process.env.REACT_APP_BACKEND;
 
 const AddUserForm = () => {
   const navigate = useNavigate();
-  const [employees, setEmployees] = useState([]);
+  // const [employees, setEmployees] = useState([]);
+  const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
   useEffect(() => {
     const storedData = localStorage.getItem("login");
@@ -25,19 +26,19 @@ const AddUserForm = () => {
     }
 
     // Fetch employee names from logindetailsTable
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get(`${Backend}/api/signUp`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        console.log(response.data);
-        setEmployees(response.data);  // Assuming response.data is an array of objects with { firstName }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
+    // const fetchEmployees = async () => {
+    //   try {
+    //     const response = await axios.get(`${Backend}/api/signUp`, {
+    //       headers: { 'Authorization': `Bearer ${token}` }
+    //     });
+    //     console.log(response.data);
+    //     setEmployees(response.data);  // Assuming response.data is an array of objects with { firstName }
+    //   } catch (error) {
+    //     console.error("Error fetching employees:", error);
+    //   }
+    // };
 
-    fetchEmployees();
+    // fetchEmployees();
 
     const now = DateTime.now().setZone("America/Toronto"); // Get Toronto time
     const formattedDateTime = now.toFormat("yyyy-MM-dd'T'HH:mm"); // Convert to datetime-local format
@@ -121,9 +122,9 @@ const AddUserForm = () => {
                 variant="outlined" fullWidth multiline={field.multiline || false} color='secondary' />
             ))}
 
-            {/* Employee Name Dropdown */}
-            <FormControl fullWidth>
-              <InputLabel color='secondary' >Employee Name</InputLabel>
+              {/* Employee Name Dropdown */}
+              <FormControl fullWidth>
+              <InputLabel color='secondary'>Employee Name</InputLabel>
               <Select
                 name="employeeName"
                 value={formik.values.employeeName}
@@ -132,12 +133,10 @@ const AddUserForm = () => {
                 color="secondary"
                 variant="outlined"
                 error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
-                sx={{ textAlign: "left" }} // Ensures selected item is left-aligned
-                MenuProps={{ PaperProps: { sx: { textAlign: "left" } } }} // Ensures menu items are also left-aligned
               >
-                {employees.map((employee, index) => (
-                  <MenuItem key={index} value={employee.name}>
-                    {employee.name}
+                {employees.map((name, index) => (
+                  <MenuItem key={index} value={name}>
+                    {name}
                   </MenuItem>
                 ))}
               </Select>
