@@ -88,6 +88,7 @@ const AddUserForm = () => {
         }
         // Add the formatted reference ID to the object
         updatedValues = { ...values, ref: formattedRef };
+        console.log("Values",updatedValues);
         alert('Record added successfully');
         resetForm();
       } catch (error) {

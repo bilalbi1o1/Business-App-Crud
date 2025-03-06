@@ -82,22 +82,28 @@ export const printUser = (user) => {
     }
 
     @media print {
-        body {
-            transform: scale(0.95);
-            transform-origin: top;
-            width: 100%;
-        }
-        .container-wrapper {
-            box-shadow: none;
-            border: none;
-        }
-        .container {
-            padding: 5px;
-        }
-        .print-container {
-            font-size: 10px;
-        }
+    body {
+        transform: scale(0.95);
+        transform-origin: top;
+        width: 100%;
     }
+    .container-wrapper {
+        box-shadow: none;
+        border: none;
+    }
+    .container {
+        padding: 5px;
+    }
+    .print-container {
+        font-size: 10px;
+    }
+    .column p {
+        display: block !important; /* Ensure paragraphs are always visible */
+        visibility: visible !important;
+        color: black !important;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -119,8 +125,8 @@ export const printUser = (user) => {
                 <p><strong>Last Name:</strong> ${user.lastName}</p>
                 <p><strong>Product:</strong> ${user.product}</p>
                 <p><strong>IMEI S/N:</strong> ${user.imei}</p>
+                <p><strong>Technician Notes:</strong> ${user.notes || "N/A"}</p>
                 <p><strong>Price:</strong> ${user.price}</p>
-                <p><strong>Technician Notes:</strong> ${user.notes}</p>
             </div>
             <div class="column">
                 <p><strong>Email:</strong> ${user.email}</p>
@@ -129,8 +135,8 @@ export const printUser = (user) => {
                 <p><strong>Employee Name:</strong> ${user.employeeName}</p>
                 <p><strong>Pickup Time:</strong> ${user.pickupTime}</p>
                 <p><strong>Date & Time:</strong> ${user.dateTime}</p>
+                <p><strong>Customer Remarks:</strong> ${user.remarks || "N/A"}</p>
                 <p><strong>Issue:</strong> ${user.issue}</p>
-                <p><strong>Customer Remarks:</strong> ${user.remarks}</p>
             </div>
         </div>
     </div>
