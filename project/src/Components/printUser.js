@@ -77,8 +77,8 @@ export const printUser = (user) => {
 
     .separator {
         border-bottom: 1px dotted black;
-        width: 25%;
-        margin-top: 60px;
+        width: 100%;
+        margin-top: 200px;
         margin-bottom: 20px;
     }
 
@@ -151,6 +151,7 @@ export const printUser = (user) => {
             <p>Ph: 905-830-4343 | Email: sales@techbuy.ca</p>
             <p>www.Techbuy.ca</p>
             <h2>Service Order</h2>
+            <h3>Customer Copy</h3>
         </div>
         <div class="print-container">
             <div class="column">

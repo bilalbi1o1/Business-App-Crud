@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { printUser } from "./printUser";
+import handleDuplicateRecord from "./duplicateRecord";
 import axios from 'axios';
 import {
     TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button,
@@ -320,11 +321,15 @@ const Project = () => {
                     <TableContainer>
                         <Table>
                             <TableHead>
-                                <TableRow style={{ backgroundColor: "midnightBLue", textAlign: "center" }} >
-                                    {columns.map((column) =>
-                                        <TableCell style={{ color: "#fff" }} key={column.id}> {column.name} </TableCell>
-                                    )}
-                                    <TableCell style={{ color: "#fff" }}>Action</TableCell>
+                                <TableRow style={{ backgroundColor: "midnightblue" }}>
+                                    {columns.map((column) => (
+                                        <TableCell key={column.id} sx={{ color: "#fff", textAlign: "center" }} align="center">
+                                            {column.name}
+                                        </TableCell>
+                                    ))}
+                                    <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">
+                                        Action
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -355,6 +360,7 @@ const Project = () => {
                                             <TableCell>{user.dateTime}</TableCell>
                                             {/* <TableCell>{user.remarks}</TableCell> */}
                                             <TableCell style={{ display: "flex" }} >
+                                                <Button color="info" size="small" variant="contained" style={{ margin: "1px" }} onClick={() => handleDuplicateRecord(user,navigate)}>Copy</Button>
                                                 <Button color='primary' size="small" variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
                                                 <Button color='error' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
                                                 <Button color='success' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => printUser({ ...user, ref: String(user.ref).padStart(6, '0') })}>Print</Button>

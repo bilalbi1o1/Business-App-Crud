@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import axios from 'axios';
 import { Button, TextField, Typography, Paper, Box, MenuItem, Autocomplete, Select, InputLabel, FormControl } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -12,12 +12,14 @@ import { DateTime } from 'luxon';
 const Backend = process.env.REACT_APP_BACKEND;
 
 const AddUserForm = () => {
+  const location = useLocation();
+  const prefilledData = location.state || {};
   const navigate = useNavigate();
   const [generatedRef, setGeneratedRef] = useState('');
   const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
-  const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   useEffect(() => {
+    
     const storedData = localStorage.getItem("login");
     const parsedData = storedData ? JSON.parse(storedData) : null;
     const token = parsedData ? parsedData.token : null;
@@ -43,20 +45,23 @@ const AddUserForm = () => {
 
     const now = DateTime.now().setZone("America/Toronto"); // Get Toronto time
     const formattedDateTime = now.toFormat("yyyy-MM-dd'T'HH:mm"); // Convert to datetime-local format
+    const formattedDate = now.toFormat("yyyy-MM-dd");            // "2025-03-07"
 
     formik.setFieldValue("dateTime", formattedDateTime);
+    formik.setFieldValue("date", formattedDate);
 
   }, []);
 
-  const handleEmployeeKeyDown = (event) => {
-    if (event.key === "Tab") {
-      const match = employees.find(name => name.toLowerCase().startsWith(formik.values.employeeName.toLowerCase()));
-      if (match) {
-        event.preventDefault();
-        formik.setFieldValue("employeeName", match);
-      }
+  useEffect(() => {
+    // If prefilledData is provided, update your form fields accordingly
+    if (prefilledData && Object.keys(prefilledData).length > 0) {
+      // For example, if using Formik:
+      formik.setValues({
+        ...formik.initialValues,
+        ...prefilledData
+      });
     }
-  };
+  }, [prefilledData]);
 
   const formik = useFormik({
     initialValues: {
