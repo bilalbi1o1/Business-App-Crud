@@ -20,17 +20,17 @@ const Project = () => {
         { id: 'firstName', name: 'First Name' },
         { id: 'lastName', name: 'Last Name' },
         { id: 'product', name: 'Product' },
-        { id: 'issue', name: 'Issue' },
-        { id: 'imei', name: 'IMEI' },
-        { id: 'notes', name: 'Technician Notes' },
+        // { id: 'issue', name: 'Issue' },
+        // { id: 'imei', name: 'IMEI' },
+        // { id: 'notes', name: 'Technician Notes' },
         { id: 'price', name: 'Price' },
         { id: 'email', name: 'Email' },
         { id: 'cellNumber', name: 'Phone Cell' },
         { id: 'phoneNumber', name: 'Phone Home' },
-        { id: 'employeeName', name: 'Employ Name' },
-        { id: 'pickUpTime', name: 'PickUp Time' },
+        // { id: 'employeeName', name: 'Employ Name' },
+        // { id: 'pickUpTime', name: 'PickUp Time' },
         { id: 'dateTime', name: 'Date & Time' },
-        { id: 'remarks', name: 'Customer Remarks' },
+        // { id: 'remarks', name: 'Customer Remarks' },
     ]
 
     const [open, openChange] = useState(false);
@@ -343,22 +343,22 @@ const Project = () => {
                                             <TableCell>{user.firstName}</TableCell>
                                             <TableCell>{user.lastName}</TableCell>
                                             <TableCell>{user.product}</TableCell>
-                                            <TableCell>{user.issue}</TableCell>
-                                            <TableCell>{user.imei}</TableCell>
-                                            <TableCell>{user.notes}</TableCell>
+                                            {/* <TableCell>{user.issue}</TableCell> */}
+                                            {/* <TableCell>{user.imei}</TableCell> */}
+                                            {/* <TableCell>{user.notes}</TableCell> */}
                                             <TableCell>{user.price}</TableCell>
                                             <TableCell>{user.email}</TableCell>
                                             <TableCell>{user.cellNumber}</TableCell>
                                             <TableCell>{user.phoneNumber}</TableCell>
-                                            <TableCell>{user.employeeName}</TableCell>
-                                            <TableCell>{user.pickupTime}</TableCell>
+                                            {/* <TableCell>{user.employeeName}</TableCell> */}
+                                            {/* <TableCell>{user.pickupTime}</TableCell> */}
                                             <TableCell>{user.dateTime}</TableCell>
-                                            <TableCell>{user.remarks}</TableCell>
+                                            {/* <TableCell>{user.remarks}</TableCell> */}
                                             <TableCell style={{ display: "flex" }} >
-                                                <Button color='primary' variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
-                                                <Button color='error' variant="contained" style={{ margin: "2px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
-                                                <Button color='success' variant="contained" style={{ margin: "2px" }} onClick={() => printUser({ ...user, ref: String(user.ref).padStart(6, '0') })}>Print</Button>
-                                                <Button color="secondary" variant="contained" style={{ margin: "2px" }} onClick={() => handleOpenEmailDialog(user)}>Email</Button>
+                                                <Button color='primary' size="small" variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
+                                                <Button color='error' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
+                                                <Button color='success' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => printUser({ ...user, ref: String(user.ref).padStart(6, '0') })}>Print</Button>
+                                                <Button color="secondary" size="small" variant="contained" style={{ margin: "1px" }} onClick={() => handleOpenEmailDialog(user)}>Email</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}

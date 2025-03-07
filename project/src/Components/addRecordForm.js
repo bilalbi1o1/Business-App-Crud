@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { Button, TextField, Typography, Paper, Box, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { Button, TextField, Typography, Paper, Box, MenuItem, Autocomplete, Select, InputLabel, FormControl } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -15,6 +15,7 @@ const AddUserForm = () => {
   const navigate = useNavigate();
   const [generatedRef, setGeneratedRef] = useState('');
   const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
+  const [filteredEmployees, setFilteredEmployees] = useState(employees);
 
   useEffect(() => {
     const storedData = localStorage.getItem("login");
@@ -46,6 +47,16 @@ const AddUserForm = () => {
     formik.setFieldValue("dateTime", formattedDateTime);
 
   }, []);
+
+  const handleEmployeeKeyDown = (event) => {
+    if (event.key === "Tab") {
+      const match = employees.find(name => name.toLowerCase().startsWith(formik.values.employeeName.toLowerCase()));
+      if (match) {
+        event.preventDefault();
+        formik.setFieldValue("employeeName", match);
+      }
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -88,7 +99,7 @@ const AddUserForm = () => {
         }
         // Add the formatted reference ID to the object
         updatedValues = { ...values, ref: formattedRef };
-        console.log("Values",updatedValues);
+        console.log("Values", updatedValues);
         alert('Record added successfully');
         resetForm();
       } catch (error) {
@@ -133,25 +144,28 @@ const AddUserForm = () => {
             ))}
 
             {/* Employee Name Dropdown */}
-            <FormControl fullWidth>
-              <InputLabel color='secondary'>Employee Name</InputLabel>
-              <Select
-                name="employeeName"
-                value={formik.values.employeeName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                color="secondary"
-                variant="outlined"
-                error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
-                style={{textAlign: "left"}}
-              >
-                {employees.map((name, index) => (
-                  <MenuItem key={index} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              freeSolo
+              options={employees}
+              value={formik.values.employeeName}
+              onChange={(event, newValue) => {
+                formik.setFieldValue("employeeName", newValue || "");
+              }}
+              onInputChange={(event, newInputValue) => {
+                formik.setFieldValue("employeeName", newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  name="employeeName"
+                  label="Employee Name"
+                  variant="outlined"
+                  color="secondary"
+                  error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
+                  helperText={formik.touched.employeeName && formik.errors.employeeName}
+                />
+              )}
+            />
 
             <TextField name='date' label="Date" type="date"
               value={formik.values.date} onChange={formik.handleChange} onBlur={formik.handleBlur}

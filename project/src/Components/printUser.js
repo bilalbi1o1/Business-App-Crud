@@ -76,9 +76,10 @@ export const printUser = (user) => {
     }
 
     .separator {
-        border-top: 3px dotted black;
-        width: 100%;
-        margin: 20px 0;
+        border-bottom: 1px dotted black;
+        width: 25%;
+        margin-top: 60px;
+        margin-bottom: 20px;
     }
 
     @media print {
