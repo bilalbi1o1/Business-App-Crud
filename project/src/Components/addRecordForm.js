@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 import { Button, TextField, Typography, Paper, Box, MenuItem, Autocomplete, Select, InputLabel, FormControl } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,7 @@ const AddUserForm = () => {
   const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
   useEffect(() => {
-    
+
     const storedData = localStorage.getItem("login");
     const parsedData = storedData ? JSON.parse(storedData) : null;
     const token = parsedData ? parsedData.token : null;
@@ -78,8 +78,8 @@ const AddUserForm = () => {
       product: Yup.string().required("Product name is required"),
       issue: Yup.string().required("Issue description is required"),
       imei: Yup.string().matches(/^\d{15}$/, "IMEI must be exactly 15 digits"),
-      price: Yup.number().positive("Price must be a positive number").required("Price is required"),
-      email: Yup.string().email("Invalid email format").required("Email is required"),
+      price: Yup.number().positive("Price must be a positive number"),
+      email: Yup.string().email("Invalid email format"),
       cellNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number"),
       phoneNumber: Yup.string().matches(/^\d{10,15}$/, "Invalid phone number"),
       employeeName: Yup.string().required("Employee name is required"),
@@ -121,7 +121,7 @@ const AddUserForm = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
       <Paper elevation={3} sx={{ padding: 4, width: '90%', maxWidth: 600, textAlign: 'center' }}>
-        <Typography variant="h5" fontWeight="bold" mb={2}>
+        <Typography sx={{ fontSize: '2rem' }} variant="h5" fontWeight="bold" mb={2}>
           Add New Record
         </Typography>
         <Link to="/Records" style={{
@@ -145,7 +145,12 @@ const AddUserForm = () => {
                 value={formik.values[field.name]} onChange={formik.handleChange}
                 onBlur={formik.handleBlur} error={formik.touched[field.name] && Boolean(formik.errors[field.name])}
                 helperText={formik.touched[field.name] && formik.errors[field.name]}
-                variant="outlined" fullWidth multiline={field.multiline || false} color='secondary' />
+                variant="outlined" fullWidth multiline={field.multiline || false} color='secondary'
+                sx={{ 
+                  '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                  '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                  '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+                }}  />
             ))}
 
             {/* Employee Name Dropdown */}
@@ -168,6 +173,11 @@ const AddUserForm = () => {
                   color="secondary"
                   error={formik.touched.employeeName && Boolean(formik.errors.employeeName)}
                   helperText={formik.touched.employeeName && formik.errors.employeeName}
+                  sx={{ 
+                    '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                    '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                    '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+                  }} 
                 />
               )}
             />
@@ -176,28 +186,49 @@ const AddUserForm = () => {
               value={formik.values.date} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.date && Boolean(formik.errors.date)}
               helperText={formik.touched.date && formik.errors.date}
-              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
+              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }}
+              sx={{ 
+                '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+              }}  />
 
             <TextField name='dateTime' label="Date & Time" type="datetime-local"
               value={formik.values.dateTime} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.dateTime && Boolean(formik.errors.dateTime)}
               helperText={formik.touched.dateTime && formik.errors.dateTime}
-              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
+              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }}
+              sx={{ 
+                '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+              }}  />
 
             <TextField name='pickupTime' label="Pickup Time" type="time"
               value={formik.values.pickupTime} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.pickupTime && Boolean(formik.errors.pickupTime)}
               helperText={formik.touched.pickupTime && formik.errors.pickupTime}
-              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }} />
+              variant="outlined" fullWidth color='secondary' InputLabelProps={{ shrink: true }}
+              sx={{ 
+                '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+              }}  />
 
             <TextField name='notes' label="Technician Notes" multiline minRows={2}
               value={formik.values.notes} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.notes && Boolean(formik.errors.notes)}
               helperText={formik.touched.notes && formik.errors.notes}
-              variant="outlined" fullWidth color='secondary' />
+              variant="outlined" fullWidth color='secondary' 
+              sx={{ 
+                '& .MuiInputBase-input': { fontSize: '1.2rem' }, // Input text
+                '& .MuiFormLabel-root': { fontSize: '1rem' }, // Label text
+                '& .MuiFormHelperText-root': { fontSize: '0.9rem' } // Helper text
+              }} />
           </Box>
 
-          <Button variant='contained' type='submit' color='primary' sx={{ mt: 3, px: 4 }} disabled={formik.isSubmitting || !formik.isValid}>
+          <Button variant='contained' type='submit' color='primary' sx={{ mt: 3, px: 4, fontSize: '1.2rem' }}
+            disabled={formik.isSubmitting || !formik.isValid}>
             {formik.isSubmitting ? "Submitting..." : "Add"}
           </Button>
         </form>

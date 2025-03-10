@@ -332,7 +332,7 @@ const Project = () => {
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody>
+                            <TableBody sx={{ '& .MuiTableCell-root': { fontSize: '0.99rem' } }}>
                                 {users
                                     .filter(user =>
                                         Object.values(user).some(value =>
@@ -360,7 +360,7 @@ const Project = () => {
                                             <TableCell>{user.dateTime}</TableCell>
                                             {/* <TableCell>{user.remarks}</TableCell> */}
                                             <TableCell style={{ display: "flex" }} >
-                                                <Button color="info" size="small" variant="contained" style={{ margin: "1px" }} onClick={() => handleDuplicateRecord(user,navigate)}>Copy</Button>
+                                                <Button color="info" size="small" variant="contained" style={{ margin: "1px" }} onClick={() => handleDuplicateRecord(user, navigate)}>Copy</Button>
                                                 <Button color='primary' size="small" variant="contained" onClick={() => editRecord(user.ref)}>Edit</Button>
                                                 <Button color='error' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => deleteUser(user.ref)}>Delete</Button>
                                                 <Button color='success' size="small" variant="contained" style={{ margin: "1px" }} onClick={() => printUser({ ...user, ref: String(user.ref).padStart(6, '0') })}>Print</Button>
