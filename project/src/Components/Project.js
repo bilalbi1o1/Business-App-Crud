@@ -312,9 +312,28 @@ const Project = () => {
 
 
             <Paper sx={{ margin: "1%" }}>
-                <div style={{ margin: "1%" }} >
-                    <Link to="/addRecord" style={{ color: '#fff', backgroundColor: 'midnightBlue', borderRadius: '10px', padding: '10px', textDecoration: 'none' }}>
+                <div style={{ margin: "1%" }}>
+                    <Link to="/addRecord"
+                        style={{
+                            color: '#fff',
+                            backgroundColor: 'midnightBlue',
+                            borderRadius: '10px',
+                            padding: '10px',
+                            textDecoration: 'none',
+                            marginRight: '10px'
+                        }}>
                         Add New (+)
+                    </Link>
+
+                    <Link to="/quotes"
+                        style={{
+                            color: '#fff',
+                            backgroundColor: 'midnightBlue',
+                            borderRadius: '10px',
+                            padding: '10px',
+                            textDecoration: 'none'
+                        }}>
+                        Quotes
                     </Link>
                 </div>
                 <div style={{ margin: "1%" }} >
