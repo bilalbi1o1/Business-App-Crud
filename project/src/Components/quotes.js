@@ -4,7 +4,7 @@ import axios from 'axios';
 import {
     TableBody, TableContainer, TableHead, Paper, Table, TableCell, Button,
     TableRow, Dialog, DialogTitle, DialogContent, Stack, TextField,
-    TablePagination
+    TablePagination, Autocomplete
 } from "@mui/material";
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ const Quotes = () => {
     const [open, setOpen] = useState(false);
     const [editedQuote, setEditedQuote] = useState(null);
     const [newQuote, setNewQuote] = useState({ phoneNumber: "", quote: "", operator: "" });
+    const operators = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
     const [page, setPage] = useState(0);
     const [rowPerPage, setRowPerPage] = useState(5);
@@ -68,18 +69,53 @@ const Quotes = () => {
     };
 
     // Handle Save (Add or Edit)
-    const handleSaveQuote = () => {
-        if (editedQuote) {
-            setQuotes(quotes.map(q => (q.phoneNumber === editedQuote.phoneNumber ? newQuote : q)));
-        } else {
-            setQuotes([...quotes, newQuote]);
+    const handleSaveQuote = async () => {
+        const loginData = localStorage.getItem('login');
+        const { token } = JSON.parse(loginData);
+
+        try {
+            if (editedQuote) {
+                // Edit Quote (PUT)
+                await axios.put(`${Backend}/api/quotes/${editedQuote.id}`, newQuote, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                });
+            } else {
+                // Add New Quote (POST)
+                await axios.post(`${Backend}/api/quotes`, newQuote, {
+                    headers: {
+                        authorization: `Bearer ${token}`
+                    }
+                });
+            }
+
+            fetchData(); // Refresh the quotes from backend
+            setOpen(false);
+        } catch (error) {
+            console.error('Error saving quote:', error);
+            navigate('/error');
         }
-        setOpen(false);
     };
 
+
     // Handle Delete
-    const handleDeleteQuote = (phoneNumber) => {
-        setQuotes(quotes.filter(q => q.phoneNumber !== phoneNumber));
+    const handleDeleteQuote = async (id) => {
+        const loginData = localStorage.getItem('login');
+        const { token } = JSON.parse(loginData);
+
+        try {
+            await axios.delete(`${Backend}/api/quotes/${id}`, {
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
+            });
+
+            fetchData(); // Refresh quotes
+        } catch (error) {
+            console.error('Error deleting quote:', error);
+            navigate('/error');
+        }
     };
 
     return (
@@ -154,8 +190,14 @@ const Quotes = () => {
                                         <TableCell align="center">{quote.quote}</TableCell>
                                         <TableCell align="center">{quote.operator}</TableCell>
                                         <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
+                                            <Button color="info" size="small" variant="contained" style={{ margin: "5px" }} onClick={() => handleDuplicateRecord(quote, navigate)}>Copy</Button>
                                             <Button color="primary" size="small" variant="contained" style={{ margin: "5px" }} onClick={() => handleEditQuote(quote)}>Edit</Button>
-                                            <Button color="error" size="small" variant="contained" style={{ margin: "5px" }} onClick={() => handleDeleteQuote(quote.phoneNumber)}>Delete</Button>
+                                            <Button color="error" size="small" variant="contained" style={{ margin: "5px" }} onClick={() => {
+                                                if (window.confirm("Are you sure you want to delete this quote?")) {
+                                                    handleDeleteQuote(quote.id);
+                                                }
+                                            }}
+                                            >Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -181,15 +223,26 @@ const Quotes = () => {
                         <TextField label="Phone Number" variant="outlined" fullWidth
                             value={newQuote.phoneNumber}
                             onChange={(e) => setNewQuote({ ...newQuote, phoneNumber: e.target.value })}
-                            disabled={!!editedQuote}
                         />
                         <TextField label="Quote" variant="outlined" fullWidth
                             value={newQuote.quote}
                             onChange={(e) => setNewQuote({ ...newQuote, quote: e.target.value })}
                         />
-                        <TextField label="Operator" variant="outlined" fullWidth
+                        <Autocomplete
+                            options={operators}
                             value={newQuote.operator}
-                            onChange={(e) => setNewQuote({ ...newQuote, operator: e.target.value })}
+                            onChange={(event, newValue) => {
+                                setNewQuote({ ...newQuote, operator: newValue });
+                            }}
+                            freeSolo
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Operator"
+                                    variant="outlined"
+                                    fullWidth
+                                />
+                            )}
                         />
                         <Button variant="contained" color="primary" onClick={handleSaveQuote}>
                             {editedQuote ? "Update Quote" : "Add Quote"}
