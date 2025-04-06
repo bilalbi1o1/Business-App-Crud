@@ -45,14 +45,17 @@ const Project = () => {
     const [emailRemarks, setEmailRemarks] = useState('');
     const [signupOpen, setSignupOpen] = useState(false);
     const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
+    const [page, pageChange] = useState(0);
+    const [rowPerPage, rowPerPageChange] = useState(4);
+    const [searchQuery, setSearchQuery] = useState('');
 
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(page,rowPerPage,searchQuery);
+    }, [page, rowPerPage, searchQuery]);
 
 
-    const fetchData = async () => {
+    const fetchData = async (page = 0, rowPerPage = 10,searchQuery = '') => {
         try {
             const loginData = localStorage.getItem('login');
             if (!loginData) {
@@ -64,10 +67,16 @@ const Project = () => {
             const response = await axios.get(`${Backend}/api/users`, {
                 headers: {
                     authorization: `Bearer ${token}`
+                },
+                params: {
+                    page: page + 1, // Backend is 1-indexed
+                    limit: rowPerPage,
+                    search: searchQuery
                 }
             });
             console.log(response.data);
-            setUsers(response.data);
+            setUsers(response.data.data);
+            setTotal(response.data.total); // 'total' is needed for pagination
         } catch (error) {
             navigate('/error');
             // console.error('Error fetching data:', error);
@@ -82,7 +91,7 @@ const Project = () => {
 
     const [users, setUsers] = useState([]);
     const [editedUser, setEditedUser] = useState();
-    const [searchQuery, setSearchQuery] = useState('');
+    const [total, setTotal] = useState(0);    
 
     const [ref, refChange] = useState(0);
     const [firstName, firstNameChange] = useState('');
@@ -100,16 +109,15 @@ const Project = () => {
     const [pickUpTime, pickUpTimeChange] = useState('');
     const [dateTime, dateTimeChange] = useState('');
     const [remarks, remarksChange] = useState('');
-    const [rowPerPage, rowPerPageChange] = useState(4);
-    const [page, pageChange] = useState(0);
 
     const handlePageChange = (event, newpage) => {
         pageChange(newpage);
     }
 
     const handleRowPerPageChange = (event) => {
-        handleRowPerPageChange(event.target.value);
-        pageChange(0);
+        const newLimit = parseInt(event.target.value, 10);
+        rowPerPageChange(newLimit);     // update row limit
+        pageChange(0);                  // reset to first page
     }
 
     const handleDateChange = event => {
@@ -359,7 +367,6 @@ const Project = () => {
                                         )
                                     )
                                     .sort((a, b) => b.ref - a.ref)
-                                    .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
                                     .map((user) => (
                                         <TableRow key={user.ref}>
                                             <TableCell>{user.ref}</TableCell>
@@ -390,10 +397,10 @@ const Project = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <TablePagination rowsPerPageOptions={[4]}
+                    <TablePagination rowsPerPageOptions={[4,7,10]}
                         rowsPerPage={rowPerPage}
                         page={page}
-                        count={users.length}
+                        count={total}
                         component={'div'}
                         onPageChange={handlePageChange}
                         onRowsPerPageChange={handleRowPerPageChange}>
