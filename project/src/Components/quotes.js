@@ -39,15 +39,15 @@ const Quotes = () => {
             if (!loginData) {
                 throw new Error('No login data found in localStorage');
             }
-
+            console.log("Logined");
             const { token } = JSON.parse(loginData);
-
+            console.log("before res");
             const response = await axios.get(`${Backend}/api/quotes`, {
                 headers: {
                     authorization: `Bearer ${token}`
                 }
             });
-            console.log(response.data);
+            console.log("after res");
             setQuotes(response.data.quotes); // Store fetched quotes in state
         } catch (error) {
             navigate('/error');
