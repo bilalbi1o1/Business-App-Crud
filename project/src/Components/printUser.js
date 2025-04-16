@@ -171,7 +171,17 @@ export const printUser = (user) => {
                 <p><strong>Date & Time:</strong> ${user.dateTime}</p>
                 <p><strong>Issue:</strong> ${user.issue}</p>
             </div>
-        </div>
+            </div>
+
+
+    <div class="notice-section" style="margin-top: 1.5rem; font-size: 11px; line-height: 1.4;">
+                <h3>Important Customer Notice</h3>
+                
+                <p>
+                Customers must pick up their devices within 30 days from the work order date. After this period, we are not responsible for the device. We do not take responsibility for any data or software during repairs. Please back up all data before bringing in your device. To collect your device, please present the original work order receipt.If the receipt is unavailable, a government-issued photo ID (such as a driver’s license, passport, or national ID) is required.
+                </p>
+                <p>Thank you for your understanding.</p>
+            </div>
     </div>
 </div>
 
