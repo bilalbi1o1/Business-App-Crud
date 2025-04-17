@@ -179,8 +179,8 @@ export const printUser = (user) => {
                 
                 <p>
                 Customers must pick up their devices within 30 days from the work order date. After this period, we are not responsible for the device. We do not take responsibility for any data or software during repairs. Please back up all data before bringing in your device. To collect your device, please present the original work order receipt.If the receipt is unavailable, a government-issued photo ID (such as a driver’s license, passport, or national ID) is required.
+                Thank you for your understanding.
                 </p>
-                <p>Thank you for your understanding.</p>
             </div>
     </div>
 </div>
