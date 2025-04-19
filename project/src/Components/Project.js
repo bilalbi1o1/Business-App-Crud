@@ -46,7 +46,7 @@ const Project = () => {
     const [signupOpen, setSignupOpen] = useState(false);
     const employees = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
     const [page, pageChange] = useState(0);
-    const [rowPerPage, rowPerPageChange] = useState(4);
+    const [rowPerPage, rowPerPageChange] = useState(10);
     const [searchQuery, setSearchQuery] = useState('');
 
 
@@ -397,7 +397,7 @@ const Project = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <TablePagination rowsPerPageOptions={[4,7,10]}
+                    <TablePagination rowsPerPageOptions={[10]}
                         rowsPerPage={rowPerPage}
                         page={page}
                         count={total}
