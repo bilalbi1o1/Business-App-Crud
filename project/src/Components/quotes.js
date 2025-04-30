@@ -23,7 +23,7 @@ const Quotes = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [open, setOpen] = useState(false);
     const [editedQuote, setEditedQuote] = useState(null);
-    const [newQuote, setNewQuote] = useState({ phoneNumber: "", quote: "", operator: "" });
+    const [newQuote, setNewQuote] = useState({ phoneNumber: "", quote: "", operator: "", product: "", description: "" });
     const operators = ["Omer", "Chand", "Nadeem", "Jason", "Ali"];
 
     const [page, setPage] = useState(0);
@@ -170,6 +170,8 @@ const Quotes = () => {
                             <TableRow style={{ backgroundColor: "midnightblue" }}>
                                 <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Quote ID</TableCell>
                                 <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Phone Number</TableCell>
+                                <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Product</TableCell>
+                                <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Description</TableCell>
                                 <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Quote</TableCell>
                                 <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Operator</TableCell>
                                 <TableCell sx={{ color: "#fff", textAlign: "center" }} align="center">Action</TableCell>
@@ -187,6 +189,8 @@ const Quotes = () => {
                                     <TableRow key={quote.phoneNumber}>
                                         <TableCell align="center">{quote.id}</TableCell>
                                         <TableCell align="center">{quote.phoneNumber}</TableCell>
+                                        <TableCell align="center">{quote.product}</TableCell>
+                                        <TableCell align="center">{quote.description}</TableCell>
                                         <TableCell align="center">{quote.quote}</TableCell>
                                         <TableCell align="center">{quote.operator}</TableCell>
                                         <TableCell align="center" style={{ display: "flex", justifyContent: "center" }}>
@@ -223,6 +227,15 @@ const Quotes = () => {
                         <TextField label="Phone Number" variant="outlined" fullWidth
                             value={newQuote.phoneNumber}
                             onChange={(e) => setNewQuote({ ...newQuote, phoneNumber: e.target.value })}
+                        />
+                        <TextField label="Product" variant="outlined" fullWidth
+                            value={newQuote.product}
+                            onChange={(e) => setNewQuote({ ...newQuote, product: e.target.value })}
+                        />
+
+                        <TextField label="Description" variant="outlined" fullWidth
+                            value={newQuote.description}
+                            onChange={(e) => setNewQuote({ ...newQuote, description: e.target.value })}
                         />
                         <TextField label="Quote" variant="outlined" fullWidth
                             value={newQuote.quote}

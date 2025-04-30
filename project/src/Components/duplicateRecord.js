@@ -10,8 +10,8 @@ const handleDuplicateRecord = (user, navigate) => {
   // Build the new data object
   const prefilledData = {
     ...user,
-    product: "",       // Clear product field
-    remarks: "",       // Clear remarks field
+    employeeName: user.operator,
+    issue:  user.description,      
     dateTime: formattedDateTime,
     date: formattedDate,
     pickUpTime: pickUpTime,
